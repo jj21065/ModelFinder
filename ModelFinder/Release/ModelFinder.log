@@ -1,0 +1,57 @@
+﻿  fftm.cpp
+D:\Git\ModelFinder\ModelFinder\fftm.cpp(72,18): warning C4244: '正在初始化': 將 'double' 轉換為 'float'，由於類型不同，可能導致資料遺失
+D:\Git\ModelFinder\ModelFinder\fftm.cpp(73,27): warning C4305: '正在初始化': 從 'double' 轉換為 'float'，是由較大的類型轉換為較小的類型，可能導致資料遺失
+D:\Git\ModelFinder\ModelFinder\fftm.cpp(81,21): warning C4305: '=': 從 'double' 轉換為 'float'，是由較大的類型轉換為較小的類型，可能導致資料遺失
+D:\Git\ModelFinder\ModelFinder\fftm.cpp(82,18): warning C4244: '正在初始化': 將 'double' 轉換為 'float'，由於類型不同，可能導致資料遺失
+D:\Git\ModelFinder\ModelFinder\fftm.cpp(97,17): warning C4244: '正在初始化': 將 'int' 轉換為 'float'，由於類型不同，可能導致資料遺失
+D:\Git\ModelFinder\ModelFinder\fftm.cpp(98,18): warning C4244: '正在初始化': 將 'int' 轉換為 'float'，由於類型不同，可能導致資料遺失
+D:\Git\ModelFinder\ModelFinder\fftm.cpp(99,43): warning C4244: '引數': 將 'int' 轉換為 '_Tp'，由於類型不同，可能導致資料遺失
+D:\Git\ModelFinder\ModelFinder\fftm.cpp(99,43): warning C4244:         with
+D:\Git\ModelFinder\ModelFinder\fftm.cpp(99,43): warning C4244:         [
+D:\Git\ModelFinder\ModelFinder\fftm.cpp(99,43): warning C4244:             _Tp=float
+D:\Git\ModelFinder\ModelFinder\fftm.cpp(99,43): warning C4244:         ]
+D:\Git\ModelFinder\ModelFinder\fftm.cpp(99,29): warning C4244: '引數': 將 'int' 轉換為 '_Tp'，由於類型不同，可能導致資料遺失
+D:\Git\ModelFinder\ModelFinder\fftm.cpp(99,29): warning C4244:         with
+D:\Git\ModelFinder\ModelFinder\fftm.cpp(99,29): warning C4244:         [
+D:\Git\ModelFinder\ModelFinder\fftm.cpp(99,29): warning C4244:             _Tp=float
+D:\Git\ModelFinder\ModelFinder\fftm.cpp(99,29): warning C4244:         ]
+D:\Git\ModelFinder\ModelFinder\fftm.cpp(100,13): warning C4244: '正在初始化': 將 'double' 轉換為 'float'，由於類型不同，可能導致資料遺失
+D:\Git\ModelFinder\ModelFinder\fftm.cpp(101,20): warning C4244: '正在初始化': 將 'double' 轉換為 'float'，由於類型不同，可能導致資料遺失
+D:\Git\ModelFinder\ModelFinder\fftm.cpp(102,19): warning C4244: '正在初始化': 將 'double' 轉換為 'float'，由於類型不同，可能導致資料遺失
+D:\Git\ModelFinder\ModelFinder\fftm.cpp(103,30): warning C4305: '正在初始化': 從 'double' 轉換為 'float'，是由較大的類型轉換為較小的類型，可能導致資料遺失
+D:\Git\ModelFinder\ModelFinder\fftm.cpp(213,17): warning C4244: '正在初始化': 將 'double' 轉換為 'float'，由於類型不同，可能導致資料遺失
+D:\Git\ModelFinder\ModelFinder\fftm.cpp(214,17): warning C4244: '正在初始化': 將 'double' 轉換為 'float'，由於類型不同，可能導致資料遺失
+D:\Git\ModelFinder\ModelFinder\fftm.cpp(219,47): warning C4244: '=': 將 'double' 轉換為 'float'，由於類型不同，可能導致資料遺失
+  ICP.cpp
+D:\Git\ModelFinder\ModelFinder\fftm.cpp(220,21): warning C4244: '=': 將 'double' 轉換為 'float'，由於類型不同，可能導致資料遺失
+D:\Git\ModelFinder\ModelFinder\ICP.h(49,21): warning C4018: '<': signed/unsigned 不相符
+D:\Git\ModelFinder\ModelFinder\ICP.h(178,13): warning C4244: '正在初始化': 將 'double' 轉換為 'float'，由於類型不同，可能導致資料遺失
+D:\Git\ModelFinder\ModelFinder\ICP.h(179,50): warning C4244: '+=': 將 'double' 轉換為 'float'，由於類型不同，可能導致資料遺失
+D:\Git\ModelFinder\ModelFinder\ICP.h(180,50): warning C4244: '+=': 將 'double' 轉換為 'float'，由於類型不同，可能導致資料遺失
+D:\Git\ModelFinder\ModelFinder\ICP.cpp(14,20): warning C4018: '<': signed/unsigned 不相符
+D:\Git\ModelFinder\ModelFinder\ICP.cpp(35,24): warning C4305: '正在初始化': 從 'double' 轉換為 'float'，是由較大的類型轉換為較小的類型，可能導致資料遺失
+D:\Git\ModelFinder\ModelFinder\ICP.cpp(40,22): warning C4244: '引數': 將 'time_t' 轉換為 'unsigned int'，由於類型不同，可能導致資料遺失
+D:\Git\ModelFinder\ModelFinder\ICP.cpp(70,21): warning C4018: '<': signed/unsigned 不相符
+  KdTree.cpp
+D:\Git\ModelFinder\ModelFinder\ICP.cpp(104,21): warning C4018: '<': signed/unsigned 不相符
+D:\Git\ModelFinder\ModelFinder\KdTree.cpp(146,11): warning C4244: '正在初始化': 將 'double' 轉換為 'float'，由於類型不同，可能導致資料遺失
+D:\Git\ModelFinder\ModelFinder\KdTree.cpp(189,15): warning C4244: '正在初始化': 將 'double' 轉換為 'float'，由於類型不同，可能導致資料遺失
+  ModelFinder.cpp
+D:\Git\ModelFinder\ModelFinder\KdTree.cpp(209,6): warning C4101: 'i': 未參考的區域變數
+D:\Git\ModelFinder\ModelFinder\ICP.h(49,21): warning C4018: '<': signed/unsigned 不相符
+D:\Git\ModelFinder\ModelFinder\ICP.h(178,13): warning C4244: '正在初始化': 將 'double' 轉換為 'float'，由於類型不同，可能導致資料遺失
+D:\Git\ModelFinder\ModelFinder\ICP.h(179,50): warning C4244: '+=': 將 'double' 轉換為 'float'，由於類型不同，可能導致資料遺失
+  NCC_ModelFinder.cpp
+D:\Git\ModelFinder\ModelFinder\ICP.h(180,50): warning C4244: '+=': 將 'double' 轉換為 'float'，由於類型不同，可能導致資料遺失
+D:\Git\ModelFinder\ModelFinder\NCC_ModelFinder.cpp(439,39): warning C4244: '=': 將 'double' 轉換為 'int'，由於類型不同，可能導致資料遺失
+D:\Git\ModelFinder\ModelFinder\NCC_ModelFinder.cpp(450,20): warning C4244: '正在初始化': 將 'double' 轉換為 'float'，由於類型不同，可能導致資料遺失
+D:\Git\ModelFinder\ModelFinder\NCC_ModelFinder.cpp(450,59): warning C4244: '+=': 將 'double' 轉換為 'float'，由於類型不同，可能導致資料遺失
+D:\Git\ModelFinder\ModelFinder\NCC_ModelFinder.cpp(454,16): warning C4244: '正在初始化': 將 'double' 轉換為 'float'，由於類型不同，可能導致資料遺失
+D:\Git\ModelFinder\ModelFinder\NCC_ModelFinder.cpp(455,64): warning C4244: '=': 將 'float' 轉換為 'int'，由於類型不同，可能導致資料遺失
+  svd.cpp
+D:\Git\ModelFinder\ModelFinder\NCC_ModelFinder.cpp(456,64): warning C4244: '=': 將 'float' 轉換為 'int'，由於類型不同，可能導致資料遺失
+  正在產生程式碼
+  Previous IPDB not found, fall back to full compilation.
+  All 45 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  已完成程式碼產生
+  ModelFinder.vcxproj -> D:\Git\ModelFinder\Release\ModelFinder.exe
