@@ -1,5 +1,5 @@
-#include "C:/opencv/build/include/opencv2/imgproc/imgproc_c.h"
-#include "C:/opencv/build/include/opencv2/core/core.hpp"
+#include "opencv2/imgproc/imgproc_c.h"
+#include "opencv2/core/core.hpp"
 using namespace cv;
 #pragma comment(lib, "opencv2413/x64/vc14/lib/opencv_core2413.lib")
 #pragma comment(lib, "opencv2413/x64/vc14/lib/opencv_highgui2413.lib")
