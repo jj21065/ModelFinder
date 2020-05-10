@@ -1,6 +1,7 @@
 
 #include "NCC_ModelFinder.h"
-#include "C:/opencv/build/include/opencv2/highgui/highgui_c.h"
+#include "opencv2/highgui/highgui_c.h"
+
 #include <windows.h>
 #include <ppl.h>
 #include <iostream>

@@ -1,13 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.28803.202
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.1022
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ModelFinder", "ModelFinder\ModelFinder.vcxproj", "{3122E148-84BB-4ABA-81AD-7627B6CFA697}"
 EndProject
+<<<<<<< HEAD
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cvModelFinder", "cvModelFinder\cvModelFinder.vcxproj", "{B36874CB-BBD7-4678-9AE7-8B4A013991C0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModelFinderTestWPF", "ModelFinderTestWPF\ModelFinderTestWPF.csproj", "{EAC6E3C1-511E-4B71-9425-F004E2F05BB6}"
+=======
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ClassLibrary1", "ClassLibrary1\ClassLibrary1.vcxproj", "{E0717B2D-629E-438D-A0A7-C432C0633783}"
+>>>>>>> 880293493ef1cf486fa1caa68036363057718032
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,6 +33,7 @@ Global
 		{3122E148-84BB-4ABA-81AD-7627B6CFA697}.Release|x64.Build.0 = Release|x64
 		{3122E148-84BB-4ABA-81AD-7627B6CFA697}.Release|x86.ActiveCfg = Release|Win32
 		{3122E148-84BB-4ABA-81AD-7627B6CFA697}.Release|x86.Build.0 = Release|Win32
+<<<<<<< HEAD
 		{B36874CB-BBD7-4678-9AE7-8B4A013991C0}.Debug|Any CPU.ActiveCfg = Debug|Win32
 		{B36874CB-BBD7-4678-9AE7-8B4A013991C0}.Debug|x64.ActiveCfg = Debug|x64
 		{B36874CB-BBD7-4678-9AE7-8B4A013991C0}.Debug|x64.Build.0 = Debug|x64
@@ -51,6 +56,16 @@ Global
 		{EAC6E3C1-511E-4B71-9425-F004E2F05BB6}.Release|x64.Build.0 = Release|x64
 		{EAC6E3C1-511E-4B71-9425-F004E2F05BB6}.Release|x86.ActiveCfg = Release|Any CPU
 		{EAC6E3C1-511E-4B71-9425-F004E2F05BB6}.Release|x86.Build.0 = Release|Any CPU
+=======
+		{E0717B2D-629E-438D-A0A7-C432C0633783}.Debug|x64.ActiveCfg = Debug|x64
+		{E0717B2D-629E-438D-A0A7-C432C0633783}.Debug|x64.Build.0 = Debug|x64
+		{E0717B2D-629E-438D-A0A7-C432C0633783}.Debug|x86.ActiveCfg = Debug|Win32
+		{E0717B2D-629E-438D-A0A7-C432C0633783}.Debug|x86.Build.0 = Debug|Win32
+		{E0717B2D-629E-438D-A0A7-C432C0633783}.Release|x64.ActiveCfg = Release|x64
+		{E0717B2D-629E-438D-A0A7-C432C0633783}.Release|x64.Build.0 = Release|x64
+		{E0717B2D-629E-438D-A0A7-C432C0633783}.Release|x86.ActiveCfg = Release|Win32
+		{E0717B2D-629E-438D-A0A7-C432C0633783}.Release|x86.Build.0 = Release|Win32
+>>>>>>> 880293493ef1cf486fa1caa68036363057718032
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

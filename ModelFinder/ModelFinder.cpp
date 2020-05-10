@@ -3,7 +3,8 @@
 
 #include <iostream>
 #include <cstdio>
-#include <opencv2/opencv.hpp>
+//#include "opencv2/opencv.hpp"
+#include "opencv2\opencv.hpp"
 #include <vector>
 #include <ctime>
 #include "NCC_ModelFinder.h"
@@ -45,8 +46,13 @@ void InitModel()
 	double score = 0;
 	CvPoint result;
 	
+<<<<<<< HEAD
 	IplImage* templateimage = cvLoadImage("template1.jpg", -1);
 	IplImage* searchImage = cvLoadImage("image4.jpg", -1);
+=======
+	IplImage* templateimage = cvLoadImage("template.jpg", -1);
+	IplImage* searchImage = cvLoadImage("test.jpg", -1);
+>>>>>>> 880293493ef1cf486fa1caa68036363057718032
 	if (searchImage == NULL)
 	{
 		cout << "\nERROR: Could not load src Image.\n" << endl;
@@ -68,7 +74,7 @@ void InitModel()
 		cvCopy(templateimage, grayTemplateImg);
 	}
 
-	if (!GM.CreateGeoMatchModel(grayTemplateImg, lowThreshold, highThreashold,-15,15))
+	if (!GM.CreateGeoMatchModel(grayTemplateImg, lowThreshold, highThreashold,-5,5))
 	{
 		cout << "ERROR: could not create model...";
 		return;
