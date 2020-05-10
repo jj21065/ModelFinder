@@ -1,0 +1,17 @@
+D:\Git\ModelFinder\ModelFinderTestWPF\bin\x64\Release\ModelFinderTestWPF.exe.config
+D:\Git\ModelFinder\ModelFinderTestWPF\bin\x64\Release\ModelFinderTestWPF.exe
+D:\Git\ModelFinder\ModelFinderTestWPF\bin\x64\Release\ModelFinderTestWPF.pdb
+D:\Git\ModelFinder\ModelFinderTestWPF\bin\x64\Release\cvModelFinder.dll
+D:\Git\ModelFinder\ModelFinderTestWPF\bin\x64\Release\cvModelFinder.pdb
+D:\Git\ModelFinder\ModelFinderTestWPF\obj\x64\Release\ModelFinderTestWPF.csprojAssemblyReference.cache
+D:\Git\ModelFinder\ModelFinderTestWPF\obj\x64\Release\MainWindow.g.cs
+D:\Git\ModelFinder\ModelFinderTestWPF\obj\x64\Release\App.g.cs
+D:\Git\ModelFinder\ModelFinderTestWPF\obj\x64\Release\ModelFinderTestWPF_MarkupCompile.cache
+D:\Git\ModelFinder\ModelFinderTestWPF\obj\x64\Release\ModelFinderTestWPF_MarkupCompile.lref
+D:\Git\ModelFinder\ModelFinderTestWPF\obj\x64\Release\MainWindow.baml
+D:\Git\ModelFinder\ModelFinderTestWPF\obj\x64\Release\ModelFinderTestWPF.g.resources
+D:\Git\ModelFinder\ModelFinderTestWPF\obj\x64\Release\ModelFinderTestWPF.Properties.Resources.resources
+D:\Git\ModelFinder\ModelFinderTestWPF\obj\x64\Release\ModelFinderTestWPF.csproj.GenerateResource.cache
+D:\Git\ModelFinder\ModelFinderTestWPF\obj\x64\Release\ModelFinderTestWPF.csproj.CopyComplete
+D:\Git\ModelFinder\ModelFinderTestWPF\obj\x64\Release\ModelFinderTestWPF.exe
+D:\Git\ModelFinder\ModelFinderTestWPF\obj\x64\Release\ModelFinderTestWPF.pdb
