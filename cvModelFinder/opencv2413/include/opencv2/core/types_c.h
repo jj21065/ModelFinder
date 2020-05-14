@@ -1058,6 +1058,8 @@ typedef struct CvPoint
 {
     int x;
     int y;
+
+
 }
 CvPoint;
 

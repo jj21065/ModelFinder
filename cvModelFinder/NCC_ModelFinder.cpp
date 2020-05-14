@@ -7,22 +7,23 @@
 #include <iostream>
 #include <intrin.h> 
 #include <vector>
+#include <set>
 using namespace std;
 using namespace Cpp;
 NCC_ModelFinder::NCC_ModelFinder(void)
 {
 }
 
-void NCC_ModelFinder::SetModelPara(double r1, double r2, double resolution,double score)
+void NCC_ModelFinder::SetModelPara(double r1, double r2, double resolution, double score)
 {
 	this->m_modelDefine.degreeStart = r1;
-	this->m_modelDefine.degreeEnd= r2;
+	this->m_modelDefine.degreeEnd = r2;
 	this->m_modelDefine.rotationResolution = resolution;
 	this->m_modelDefine.searshScore = score;
 
 }
 
-void NCC_ModelFinder::SetSobelThreshold(int high,int low)
+void NCC_ModelFinder::SetSobelThreshold(int high, int low)
 {
 	m_modelDefine.SobelHigh = high;
 	m_modelDefine.SobelLow = low;
@@ -32,7 +33,7 @@ void NCC_ModelFinder::SetROI(double x, double y, double width, double height)
 {
 	this->roi.rect.x = x;
 	this->roi.rect.y = y;
-	this->roi.rect.width= width;
+	this->roi.rect.width = width;
 	this->roi.rect.height = height;
 	this->roi.isEnable = true;
 }
@@ -49,7 +50,7 @@ void NCC_ModelFinder::CreatModel(cv::Mat mat)
 	int highThreashold = m_modelDefine.SobelHigh;	//deafult value
 
 	IplImage* templateimage = new IplImage(mat);
-	
+
 	if (templateimage == NULL)
 	{
 		cout << "\nERROR: Could not load Template Image.\n" << endl;
@@ -87,6 +88,7 @@ void NCC_ModelFinder::CreatModel(cv::Mat mat)
 	//cvDestroyWindow("Template");
 
 	cvReleaseImage(&grayTemplateImg);
+	delete templateimage;
 }
 
 void NCC_ModelFinder::ModelEraser(int x, int y, int eraserWidth)
@@ -94,29 +96,73 @@ void NCC_ModelFinder::ModelEraser(int x, int y, int eraserWidth)
 	if (m_modelDefine.modelDefined)
 	{
 		int i = 0;
-		int j = 0;
-		double resolution = m_modelDefine.rotationResolution;
-		double r1 = m_modelDefine.degreeStart;
-		double r2 = m_modelDefine.degreeEnd;
-		int count = 0;
-		std::vector<CvPoint>pointvec;
-		std::vector<double> edgexvec;
-		std::vector<double> edgeyvec;
-	
-
-		// change coordinates to reflect center of gravity
-		for (int m = 0; m < m_modelDefine.noOfCordinates; m++)
+		int no = 0;
+		int size = m_modelDefine.noOfCordinates;
+		int* xx = new int[m_modelDefine.noOfCordinates]{ 0 };
+		int* yy = new int[m_modelDefine.noOfCordinates]{ 0 };
+		double* ex = new double[m_modelDefine.noOfCordinates]{ 0 };
+		double* ey = new double[m_modelDefine.noOfCordinates]{ 0 };
+		double* m = new double[m_modelDefine.noOfCordinates]{ 0 };
+		for (i = 0; i < size; i++)
 		{
-			int temp;
 
-			temp = m_modelDefine.cordinates[m].x;
-			m_modelDefine.cordinates[m].x = temp - m_modelDefine.centerOfGravity.x;
-			temp = m_modelDefine.cordinates[m].y;
-			m_modelDefine.cordinates[m].y = temp - m_modelDefine.centerOfGravity.y;
+			if (abs(m_modelDefine.cordinates[i].x + m_modelDefine.centerOfGravity.x - x) < eraserWidth && abs(m_modelDefine.cordinates[i].y + m_modelDefine.centerOfGravity.y - y) < eraserWidth) {
+			
+			}
+			else
+			{
+				++no;
+				xx[no] = m_modelDefine.cordinates[i].x;
+				yy[no] = m_modelDefine.cordinates[i].y;
+				ex[no] = m_modelDefine.edgeDerivativeX[i];
+				ey[no] = m_modelDefine.edgeDerivativeY[i];
+				m[no] = m_modelDefine.edgeMagnitude[i];
+			}
+
 		}
 
-		m_modelDefine.totalDegree = (m_modelDefine.degreeEnd - m_modelDefine.degreeStart) / m_modelDefine.rotationResolution + 1;
-		
+		for (i = 0; i < m_modelDefine.noOfCordinates; ++i)
+		{
+			
+			m_modelDefine.cordinates[i].x = xx[i];
+			 m_modelDefine.cordinates[i].y = yy[i];
+			 m_modelDefine.edgeDerivativeX[i] = ex[i];
+			m_modelDefine.edgeDerivativeY[i] = ey[i];
+			 m_modelDefine.edgeMagnitude[i] = m[i];
+		}
+		m_modelDefine.noOfCordinates = no;
+		//std::cout << '\n';
+		//m_modelDefine.Release();
+
+		//m_modelDefine.cordinates = new CvPoint[m_modelDefine.modelWidth * m_modelDefine.modelHeight];		//Allocate memory for coorinates of selected points in template image
+		//m_modelDefine.edgeMagnitude = new double[m_modelDefine.modelWidth * m_modelDefine.modelHeight];		//Allocate memory for edge magnitude for selected points
+		//m_modelDefine.edgeDerivativeX = new double[m_modelDefine.modelWidth * m_modelDefine.modelHeight];			//Allocate memory for edge X derivative for selected points
+		//m_modelDefine.edgeDerivativeY = new double[m_modelDefine.modelWidth * m_modelDefine.modelHeight];			////Allocate memory for edge Y derivative for selected points
+
+
+
+		//std::set<int>::iterator iterx = xx.begin();
+		//std::set<int>::iterator itery = yy.begin();
+		//std::set<double>::iterator iterex = edgex.begin();
+		//std::set<double>::iterator iterey = edgey.begin();
+		//std::set<double>::iterator itermag = mag.begin();
+		//
+		//for (i = 0; i < m_modelDefine.noOfCordinates; ++i,++iterx,++itery,++iterex,++iterey,++itermag)
+		//{
+		//	{
+		//		m_modelDefine.cordinates[i].x = (*iterx);
+		//		m_modelDefine.cordinates[i].y = (*itery);
+		//		m_modelDefine.edgeDerivativeX[i] = (*iterex);
+		//		m_modelDefine.edgeDerivativeY[i] = (*iterey);
+		//		m_modelDefine.edgeMagnitude[i] = (*itermag);
+		//	}
+		//}
+		m_modelDefine.ReleaseMatrix();
+		float r1 = m_modelDefine.degreeStart;
+		float r2 = m_modelDefine.degreeEnd;
+		float resolution = m_modelDefine.rotationResolution;
+		m_modelDefine.totalDegree = (r2 - r1) / m_modelDefine.rotationResolution + 1;
+		int count = 0;
 		m_modelDefine.cordinatesRotate = new CvPoint * [m_modelDefine.totalDegree];		//Coordinates array to store model points	
 		m_modelDefine.edgeDerivativeXRotate = new double* [m_modelDefine.totalDegree];	//gradient in X direction
 		m_modelDefine.edgeDerivativeYRotate = new double* [m_modelDefine.totalDegree]; 	//radient in Y direction	
@@ -139,11 +185,6 @@ void NCC_ModelFinder::ModelEraser(int x, int y, int eraserWidth)
 			}
 			count++;
 		}
-
-
-		CvPoint** cordinatesRotate = nullptr;		//Coordinates array to store model points	
-		double** edgeDerivativeXRotate = nullptr;	//gradient in X direction
-		double** edgeDerivativeYRotate = nullptr;	//radient in Y direction	
 	}
 }
 
@@ -161,7 +202,7 @@ void NCC_ModelFinder::ModelFind(cv::Mat mat)
 	clock_t start_time1 = clock();
 
 	IplImage* searchImage = new IplImage(mat);
-	if(roi.isEnable)	
+	if (roi.isEnable)
 		cvSetImageROI(searchImage, roi.rect);
 
 	if (searchImage == NULL)
@@ -180,7 +221,7 @@ void NCC_ModelFinder::ModelFind(cv::Mat mat)
 		if (roi.rect.x + roi.rect.width > searchImage->width - 1)
 			roi.rect.width = searchImage->width - 1 - roi.rect.x;
 		if (roi.rect.x + roi.rect.height > searchImage->height - 1)
-			roi.rect.height= searchImage->height - 1 - roi.rect.y;
+			roi.rect.height = searchImage->height - 1 - roi.rect.y;
 		searchSize = cvSize(roi.rect.width, roi.rect.height);
 	}
 	else
@@ -200,7 +241,7 @@ void NCC_ModelFinder::ModelFind(cv::Mat mat)
 	cout << " ------------------------------------\n";
 
 	double rotation = 0;
-	
+
 
 	//score = GM.FindGeoMatchModel(graySearchImg, minScore, greediness, &result);
 	score = FindGeoMatchModelRotateParallel(graySearchImg, minScore, greediness, rotation);
@@ -211,8 +252,8 @@ void NCC_ModelFinder::ModelFind(cv::Mat mat)
 	if (score > minScore) // if score is atleast 0.4
 	{
 		result.isFind = true;
-		cout << " Found at [" << result.location.x << ", " << result.location.y<< ", Rotation " << result.rotation << "]\n Score = " << score << "\n Searching Time = " << total_time * 1000 << "ms";
-		
+		cout << " Found at [" << result.location.x << ", " << result.location.y << ", Rotation " << result.rotation << "]\n Score = " << score << "\n Searching Time = " << total_time * 1000 << "ms";
+
 		if (showCvImage)
 		{
 			cvResetImageROI(searchImage);
@@ -235,16 +276,17 @@ void NCC_ModelFinder::ModelFind(cv::Mat mat)
 	cout << "\n ------------------------------------\n\n";
 	cout << "\n Press any key to exit!";
 
-	
+
 	/*cvWaitKey(0);
 	cvDestroyWindow("Search Image");*/
-	
+
 	cvReleaseImage(&graySearchImg);
+	delete searchImage;
 }
 
 int NCC_ModelFinder::CreateGeoMatchModel(const void* templateArr, double maxContrast, double minContrast)
 {
-	if(m_modelDefine.modelDefined)
+	if (m_modelDefine.modelDefined)
 		m_modelDefine.Release();
 	double resolution = m_modelDefine.rotationResolution;
 	double r1 = m_modelDefine.degreeStart;
@@ -468,8 +510,8 @@ int NCC_ModelFinder::CreateGeoMatchModel(const void* templateArr, double maxCont
 		for (int i = 0; i < m_modelDefine.noOfCordinates; i++)
 		{
 			float thida = degree * CV_PI / 180.0;
-			m_modelDefine.cordinatesRotate[count][i].x = (m_modelDefine.cordinates[i].x )* cos(thida) - (m_modelDefine.cordinates[i].y) * sin(thida);
-			m_modelDefine.cordinatesRotate[count][i].y = (m_modelDefine.cordinates[i].x) * sin(thida) + (m_modelDefine.cordinates[i].y ) * cos(thida);
+			m_modelDefine.cordinatesRotate[count][i].x = (m_modelDefine.cordinates[i].x) * cos(thida) - (m_modelDefine.cordinates[i].y) * sin(thida);
+			m_modelDefine.cordinatesRotate[count][i].y = (m_modelDefine.cordinates[i].x) * sin(thida) + (m_modelDefine.cordinates[i].y) * cos(thida);
 			m_modelDefine.edgeDerivativeXRotate[count][i] = m_modelDefine.edgeDerivativeX[i] * cos(thida) - m_modelDefine.edgeDerivativeY[i] * sin(thida);
 			m_modelDefine.edgeDerivativeYRotate[count][i] = m_modelDefine.edgeDerivativeX[i] * sin(thida) + m_modelDefine.edgeDerivativeY[i] * cos(thida);
 
@@ -581,11 +623,11 @@ double NCC_ModelFinder::FindGeoMatchModelRotateParallel(const void* srcarr, doub
 				int curX, curY;
 				for (int m = 0; m < m_modelDefine.noOfCordinates; m++)
 				{
-			/*		__m128 m1, m2, m3, m4;
+					/*		__m128 m1, m2, m3, m4;
 
-					__m128* pSrc1 = (__m128*) pArray1;
-					__m128* pSrc2 = (__m128*) pArray2;
-					__m128* pDest = (__m128*) pResult;*/
+							__m128* pSrc1 = (__m128*) pArray1;
+							__m128* pSrc2 = (__m128*) pArray2;
+							__m128* pDest = (__m128*) pResult;*/
 
 					curX = i + m_modelDefine.cordinatesRotate[degree][m].x;	// template X coordinate
 					curY = j + m_modelDefine.cordinatesRotate[degree][m].y; // template Y coordinate
@@ -623,7 +665,7 @@ double NCC_ModelFinder::FindGeoMatchModelRotateParallel(const void* srcarr, doub
 					resultScore[degree] = partialScore; //  Match score
 					tmpPoint[degree].x = i;
 					tmpPoint[degree].y = j;
-				
+
 				}
 			}
 
@@ -643,7 +685,7 @@ double NCC_ModelFinder::FindGeoMatchModelRotateParallel(const void* srcarr, doub
 				tmpindex = i;
 			}
 	}
-	
+
 	rotation = tmpindex;
 
 	double score = resultScore[tmpindex];
@@ -844,15 +886,15 @@ double NCC_ModelFinder::FindGeoMatchModelRotateParallelSSE(const void* srcarr, d
 	return score;
 }
 
-void NCC_ModelFinder::PyramidTestFlow(cv::Mat templateImage,cv::Mat srcImage)
+void NCC_ModelFinder::PyramidTestFlow(cv::Mat templateImage, cv::Mat srcImage)
 {
-	
+
 }
 
 // destructor
 NCC_ModelFinder::~NCC_ModelFinder(void)
 {
-	
+
 }
 
 //allocate memory for doubel matrix

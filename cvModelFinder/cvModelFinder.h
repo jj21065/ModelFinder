@@ -53,6 +53,8 @@ namespace CLI {
 		void ModelFind(Bitmap^ _image);
 		void SetModelPara(double r1, double r2, double resolution,double score);
 		void SetSobelThreshold(int high, int low);
+		void EraseModel(int x, int y, int width);
+		void DrawModel(Bitmap^ _image);
 		bool showCvImage = true;
 	};
 

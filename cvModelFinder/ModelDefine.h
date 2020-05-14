@@ -36,6 +36,9 @@ namespace Cpp {
 		~ModelDefine();
 
 		void Release();
+		void ReleaseMatrix();
+	
+
 		
 	
 	};
