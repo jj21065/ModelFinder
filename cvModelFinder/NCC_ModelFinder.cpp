@@ -20,12 +20,20 @@ void NCC_ModelFinder::SetModelPara(double r1, double r2, double resolution,doubl
 	this->m_modelDefine.rotationResolution = resolution;
 	this->m_modelDefine.searshScore = score;
 
+	this->m_modelDefineLow.degreeStart = r1;
+	this->m_modelDefineLow.degreeEnd = r2;
+	this->m_modelDefineLow.rotationResolution = resolution;
+	this->m_modelDefineLow.searshScore = score;
+
 }
 
 void NCC_ModelFinder::SetSobelThreshold(int high,int low)
 {
 	m_modelDefine.SobelHigh = high;
 	m_modelDefine.SobelLow = low;
+
+	m_modelDefineLow.SobelHigh = high;
+	m_modelDefineLow.SobelLow = low;
 }
 
 void NCC_ModelFinder::SetROI(double x, double y, double width, double height)
@@ -65,8 +73,21 @@ void NCC_ModelFinder::CreatModel(cv::Mat mat)
 	{
 		cvCopy(templateimage, grayTemplateImg);
 	}
-
+	
 	if (!CreateGeoMatchModel(grayTemplateImg, lowThreshold, highThreashold))
+	{
+		cout << "ERROR: could not create model...";
+		return;
+	}
+	CvSize dst_cvsize;          //目標影像尺寸
+	IplImage* dst = 0;          //目標影像指標
+	dst_cvsize.width = grayTemplateImg->width /2 ;       //目標影像的寬為源影像寬的scale倍
+	dst_cvsize.height = grayTemplateImg->height /2; //
+	dst = cvCreateImage(dst_cvsize, grayTemplateImg->depth, grayTemplateImg->nChannels);
+	cvResize(grayTemplateImg, dst, CV_INTER_LINEAR);    //
+	/*cvNamedWindow("Template dst", CV_WINDOW_AUTOSIZE);
+	cvShowImage("Template dst", dst);*/
+	if (!CreateGeoMatchModel(dst, m_modelDefineLow, lowThreshold, highThreashold))
 	{
 		cout << "ERROR: could not create model...";
 		return;
@@ -215,6 +236,39 @@ void NCC_ModelFinder::CreateRotateModel()
 	m_modelDefine.modelDefined = true;
 }
 
+void NCC_ModelFinder::CreateRotateModel(Cpp::ModelDefine &model)
+{
+	model.ReleaseMatrix();
+	float r1 = model.degreeStart;
+	float r2 = model.degreeEnd;
+	float resolution = model.rotationResolution;
+	model.totalDegree = (r2 - r1) / model.rotationResolution + 1;
+	int count = 0;
+	model.cordinatesRotate = new CvPoint * [model.totalDegree];		//Coordinates array to store model points	
+	model.edgeDerivativeXRotate = new double* [model.totalDegree];	//gradient in X direction
+	model.edgeDerivativeYRotate = new double* [model.totalDegree]; 	//radient in Y direction	
+	for (int i = 0; i < model.totalDegree; i++)
+	{
+		model.cordinatesRotate[i] = new CvPoint[model.noOfCordinates];
+		model.edgeDerivativeXRotate[i] = new double[model.noOfCordinates];
+		model.edgeDerivativeYRotate[i] = new double[model.noOfCordinates];
+	}
+	for (float degree = r1; degree < r2; degree += resolution)
+	{
+		for (int i = 0; i < model.noOfCordinates; i++)
+		{
+			float thida = degree * CV_PI / 180.0;
+			model.cordinatesRotate[count][i].x = (model.cordinates[i].x) * cos(thida) - (model.cordinates[i].y) * sin(thida);
+			model.cordinatesRotate[count][i].y = (model.cordinates[i].x) * sin(thida) + (model.cordinates[i].y) * cos(thida);
+			model.edgeDerivativeXRotate[count][i] = model.edgeDerivativeX[i] * cos(thida) - model.edgeDerivativeY[i] * sin(thida);
+			model.edgeDerivativeYRotate[count][i] = model.edgeDerivativeX[i] * sin(thida) + model.edgeDerivativeY[i] * cos(thida);
+
+		}
+		count++;
+	}
+	model.modelDefined = true;
+}
+
 void NCC_ModelFinder::ModelFind(cv::Mat mat)
 {
 
@@ -248,7 +302,7 @@ void NCC_ModelFinder::ModelFind(cv::Mat mat)
 	{
 		cvCopy(searchImage, graySearchImg);
 	}
-	if (roi.isEnable)
+	/*if (roi.isEnable)
 	{
 		if (roi.rect.x < 0)
 			roi.rect.x = 0;
@@ -259,22 +313,81 @@ void NCC_ModelFinder::ModelFind(cv::Mat mat)
 		if (roi.rect.y + roi.rect.height > searchImage->height)
 			roi.rect.height = searchImage->height - roi.rect.y;
 
+
 		cvSetImageROI(graySearchImg, roi.rect);
 	}
 	else
 	{
 		cvResetImageROI(graySearchImg);
 		
-	}
+	}*/
 	cout << " Finding Shape Model.." << " Minumum Score = " << minScore << " Greediness = " << greediness << "\n\n";
 	cout << " ------------------------------------\n";
 
 	double rotation = 0;
 	
+	if (roi.isEnable)
+	{
+		roi2.isEnable = true;
+		roi2.rect.x = roi.rect.x / 2;
+		roi2.rect.y = roi.rect.y / 2;
+		roi2.rect.width = roi.rect.width / 2;
+		roi2.rect.height = roi.rect.height / 2;
+		CvSize dst_cvsize;          //目標影像尺寸
+		IplImage* dst = 0;          //目標影像指標
+		dst_cvsize.width = graySearchImg->width / 2;       //目標影像的寬為源影像寬的scale倍
+		dst_cvsize.height = graySearchImg->height / 2; //
+		dst = cvCreateImage(dst_cvsize, graySearchImg->depth, graySearchImg->nChannels);
+		cvResize(graySearchImg, dst, CV_INTER_LINEAR);    //
+	/*	cvNamedWindow("Search dst", CV_WINDOW_AUTOSIZE);
+		cvShowImage("Search dst", dst);*/
+		cvSetImageROI(dst, roi2.rect);
+	/*	cvNamedWindow("Search roi dst", CV_WINDOW_AUTOSIZE);
+		cvShowImage("Search roi dst", dst);*/
 
-	//score = GM.FindGeoMatchModel(graySearchImg, minScore, greediness, &result);
-	score = FindGeoMatchModelRotateParallel(graySearchImg, minScore, greediness, rotation);
-	//score = GM.FindGeoMatchModelRotate(graySearchImg, minScore, greediness, &result, rotation);
+		int rotateStart = 0;
+		int rotateEnd = (int)((m_modelDefine.degreeEnd - m_modelDefine.degreeStart) / m_modelDefine.rotationResolution);
+		score = FindGeoMatchModelRotateParallelSSE(dst, m_modelDefineLow,roi2, 0, 0, rotateStart,rotateEnd, minScore, greediness, rotation);
+		if (score > minScore)
+		{
+			cout << " Found little image at [" << result.location.x << ", " << result.location.y << ", Rotation " << result.rotation << "]\n Score = " << score << "\n Searching Time = " << total_time * 1000 << "ms";
+			if (roi.isEnable)
+			{
+				if (roi.rect.x < 0)
+					roi.rect.x = 0;
+				if (roi.rect.y < 0)
+					roi.rect.y;
+				if (roi.rect.x + roi.rect.width > searchImage->width)
+					roi.rect.width = searchImage->width - roi.rect.x;
+				if (roi.rect.y + roi.rect.height > searchImage->height)
+					roi.rect.height = searchImage->height - roi.rect.y;
+
+
+				cvSetImageROI(graySearchImg, roi.rect);
+			}
+			else
+			{
+				cvResetImageROI(graySearchImg);
+
+			}
+			rotateStart = (int)(result.rotation - m_modelDefine.degreeStart) / m_modelDefine.rotationResolution;
+			if (rotateStart - 5 < 0)
+				rotateStart = 0;
+			else
+				rotateStart -= 5;
+			if(rotateStart + 5 < rotateEnd)
+				rotateEnd = rotateStart + 5;
+			
+			score = FindGeoMatchModelRotateParallelSSE(graySearchImg,m_modelDefine,roi,result.location.x*2 -40-roi.rect.y, result.location.y * 2-40-roi.rect.x, rotateStart,rotateEnd,  minScore, greediness, rotation);
+		}
+	}
+	else
+	{
+		cvResetImageROI(graySearchImg);
+	}
+
+	//score = FindGeoMatchModelRotateParallel(graySearchImg, minScore, greediness, rotation);
+	
 	clock_t finish_time1 = clock();
 	total_time = (double)(finish_time1 - start_time1) / CLOCKS_PER_SEC;
 
@@ -563,6 +676,255 @@ int NCC_ModelFinder::CreateGeoMatchModel(const void* templateArr, double maxCont
 	return 1;
 }
 
+int NCC_ModelFinder::CreateGeoMatchModel(const void* templateArr,Cpp::ModelDefine& model, double maxContrast, double minContrast)
+{
+	if (model.modelDefined)
+		model.Release();
+	double resolution = model.rotationResolution;
+	double r1 = model.degreeStart;
+	double r2 = model.degreeEnd;
+
+	CvMat* gx = 0;		//Matrix to store X derivative
+	CvMat* gy = 0;		//Matrix to store Y derivative
+	CvMat* nmsEdges = 0;		//Matrix to store temp restult
+	CvSize Ssize;
+
+	// Convert IplImage to Matrix for integer operations
+	CvMat srcstub, * src = (CvMat*)templateArr;
+	src = cvGetMat(src, &srcstub);
+	if (CV_MAT_TYPE(src->type) != CV_8UC1)
+	{
+		return 0;
+	}
+
+	// set width and height
+	Ssize.width = src->width;
+	Ssize.height = src->height;
+	model.modelHeight = src->height;		//Save Template height
+	model.modelWidth = src->width;			//Save Template width
+
+	model.noOfCordinates = 0;											//initialize	
+	model.cordinates = new CvPoint[model.modelWidth * model.modelHeight];		//Allocate memory for coorinates of selected points in template image
+	model.edgeMagnitude = new double[model.modelWidth * model.modelHeight];		//Allocate memory for edge magnitude for selected points
+	model.edgeDerivativeX = new double[model.modelWidth * model.modelHeight];			//Allocate memory for edge X derivative for selected points
+	model.edgeDerivativeY = new double[model.modelWidth * model.modelHeight];			////Allocate memory for edge Y derivative for selected points
+
+
+	// Calculate gradient of Template
+	gx = cvCreateMat(Ssize.height, Ssize.width, CV_16SC1);		//create Matrix to store X derivative
+	gy = cvCreateMat(Ssize.height, Ssize.width, CV_16SC1);		//create Matrix to store Y derivative
+	cvSobel(src, gx, 1, 0, 3);		//gradient in X direction			
+	cvSobel(src, gy, 0, 1, 3);	//gradient in Y direction
+
+	nmsEdges = cvCreateMat(Ssize.height, Ssize.width, CV_32F);		//create Matrix to store Final nmsEdges
+	const short* _sdx;
+	const short* _sdy;
+	double fdx, fdy;
+	double MagG, DirG;
+	double MaxGradient = -99999.99;
+	double direction;
+	int* orients = new int[Ssize.height * Ssize.width];
+	int count = 0, i, j; // count variable;
+
+	double** magMat;
+	CreateDoubleMatrix(magMat, Ssize);
+
+	for (i = 1; i < Ssize.height - 1; i++)
+	{
+		for (j = 1; j < Ssize.width - 1; j++)
+		{
+			_sdx = (short*)(gx->data.ptr + gx->step * i);
+			_sdy = (short*)(gy->data.ptr + gy->step * i);
+			fdx = _sdx[j]; fdy = _sdy[j];        // read x, y derivatives
+
+			MagG = sqrt((float)(fdx * fdx) + (float)(fdy * fdy)); //Magnitude = Sqrt(gx^2 +gy^2)
+			direction = cvFastArctan((float)fdy, (float)fdx);	 //Direction = invtan (Gy / Gx)
+			magMat[i][j] = MagG;
+
+			if (MagG > MaxGradient)
+				MaxGradient = MagG; // get maximum gradient value for normalizing.
+
+
+				// get closest angle from 0, 45, 90, 135 set
+			if ((direction > 0 && direction < 22.5) || (direction > 157.5 && direction < 202.5) || (direction > 337.5 && direction < 360))
+				direction = 0;
+			else if ((direction > 22.5 && direction < 67.5) || (direction > 202.5 && direction < 247.5))
+				direction = 45;
+			else if ((direction > 67.5 && direction < 112.5) || (direction > 247.5 && direction < 292.5))
+				direction = 90;
+			else if ((direction > 112.5 && direction < 157.5) || (direction > 292.5 && direction < 337.5))
+				direction = 135;
+			else
+				direction = 0;
+
+			orients[count] = (int)direction;
+			count++;
+		}
+	}
+
+	count = 0; // init count
+	// non maximum suppression
+	double leftPixel, rightPixel;
+
+	for (i = 1; i < Ssize.height - 1; i++)
+	{
+		for (j = 1; j < Ssize.width - 1; j++)
+		{
+			switch (orients[count])
+			{
+			case 0:
+				leftPixel = magMat[i][j - 1];
+				rightPixel = magMat[i][j + 1];
+				break;
+			case 45:
+				leftPixel = magMat[i - 1][j + 1];
+				rightPixel = magMat[i + 1][j - 1];
+				break;
+			case 90:
+				leftPixel = magMat[i - 1][j];
+				rightPixel = magMat[i + 1][j];
+				break;
+			case 135:
+				leftPixel = magMat[i - 1][j - 1];
+				rightPixel = magMat[i + 1][j + 1];
+				break;
+			}
+			// compare current pixels value with adjacent pixels
+			if ((magMat[i][j] < leftPixel) || (magMat[i][j] < rightPixel))
+				(nmsEdges->data.ptr + nmsEdges->step * i)[j] = 0;
+			else
+				(nmsEdges->data.ptr + nmsEdges->step * i)[j] = (uchar)(magMat[i][j] / MaxGradient * 255);
+
+			count++;
+		}
+	}
+
+
+	int RSum = 0, CSum = 0;
+	int curX, curY;
+	int flag = 1;
+
+	//Hysterisis threshold
+	for (i = 1; i < Ssize.height - 1; i++)
+	{
+		for (j = 1; j < Ssize.width; j++)
+		{
+			_sdx = (short*)(gx->data.ptr + gx->step * i);
+			_sdy = (short*)(gy->data.ptr + gy->step * i);
+			fdx = _sdx[j]; fdy = _sdy[j];
+
+			MagG = sqrt(fdx * fdx + fdy * fdy); //Magnitude = Sqrt(gx^2 +gy^2)
+			DirG = cvFastArctan((float)fdy, (float)fdx);	 //Direction = tan(y/x)
+
+			////((uchar*)(imgGDir->imageData + imgGDir->widthStep*i))[j]= MagG;
+			flag = 1;
+			// 用Threshold 篩選上下界線
+			if (((double)((nmsEdges->data.ptr + nmsEdges->step * i))[j]) < maxContrast)
+			{
+				if (((double)((nmsEdges->data.ptr + nmsEdges->step * i))[j]) < minContrast)
+				{
+
+					(nmsEdges->data.ptr + nmsEdges->step * i)[j] = 0;
+					flag = 0; // remove from edge
+					////((uchar*)(imgGDir->imageData + imgGDir->widthStep*i))[j]=0;
+				}
+				else
+				{   // if any of 8 neighboring pixel is not greater than max contraxt remove from edge
+					if ((((double)((nmsEdges->data.ptr + nmsEdges->step * (i - 1)))[j - 1]) < maxContrast) &&
+						(((double)((nmsEdges->data.ptr + nmsEdges->step * (i - 1)))[j]) < maxContrast) &&
+						(((double)((nmsEdges->data.ptr + nmsEdges->step * (i - 1)))[j + 1]) < maxContrast) &&
+						(((double)((nmsEdges->data.ptr + nmsEdges->step * i))[j - 1]) < maxContrast) &&
+						(((double)((nmsEdges->data.ptr + nmsEdges->step * i))[j + 1]) < maxContrast) &&
+						(((double)((nmsEdges->data.ptr + nmsEdges->step * (i + 1)))[j - 1]) < maxContrast) &&
+						(((double)((nmsEdges->data.ptr + nmsEdges->step * (i + 1)))[j]) < maxContrast) &&
+						(((double)((nmsEdges->data.ptr + nmsEdges->step * (i + 1)))[j + 1]) < maxContrast))
+					{
+						(nmsEdges->data.ptr + nmsEdges->step * i)[j] = 0;
+						flag = 0;
+						////((uchar*)(imgGDir->imageData + imgGDir->widthStep*i))[j]=0;
+					}
+				}
+
+			}
+
+			// save selected edge information
+			curX = i;	curY = j;
+			if (flag != 0)
+			{
+				if (fdx != 0 || fdy != 0)
+				{
+					RSum = RSum + curX;	CSum = CSum + curY; // Row sum and column sum for center of gravity
+
+					model.cordinates[model.noOfCordinates].x = curX;
+					model.cordinates[model.noOfCordinates].y = curY;
+					model.edgeDerivativeX[model.noOfCordinates] = fdx;
+					model.edgeDerivativeY[model.noOfCordinates] = fdy;
+
+					//handle divide by zero
+					if (MagG != 0)
+						model.edgeMagnitude[model.noOfCordinates] = 1 / MagG;  // gradient magnitude 
+					else
+						model.edgeMagnitude[model.noOfCordinates] = 0;
+
+					model.noOfCordinates++;
+				}
+			}
+		}
+	}
+
+	model.centerOfGravity.x = RSum / model.noOfCordinates; // center of gravity
+	model.centerOfGravity.y = CSum / model.noOfCordinates;	// center of gravity
+
+	// change coordinates to reflect center of gravity
+	for (int m = 0; m < model.noOfCordinates; m++)
+	{
+		int temp;
+
+		temp = model.cordinates[m].x;
+		model.cordinates[m].x = temp - model.centerOfGravity.x;
+		temp = model.cordinates[m].y;
+		model.cordinates[m].y = temp - model.centerOfGravity.y;
+	}
+
+	model.totalDegree = (r2 - r1) / resolution + 1;
+	count = 0;
+	model.cordinatesRotate = new CvPoint * [model.totalDegree];		//Coordinates array to store model points	
+	model.edgeDerivativeXRotate = new double* [model.totalDegree];	//gradient in X direction
+	model.edgeDerivativeYRotate = new double* [model.totalDegree]; 	//radient in Y direction	
+	for (int i = 0; i < model.totalDegree; i++)
+	{
+		model.cordinatesRotate[i] = new CvPoint[model.noOfCordinates];
+		model.edgeDerivativeXRotate[i] = new double[model.noOfCordinates];
+		model.edgeDerivativeYRotate[i] = new double[model.noOfCordinates];
+	}
+	for (float degree = r1; degree < r2; degree += resolution)
+	{
+		for (int i = 0; i < model.noOfCordinates; i++)
+		{
+			float thida = degree * CV_PI / 180.0;
+			model.cordinatesRotate[count][i].x = (model.cordinates[i].x) * cos(thida) - (model.cordinates[i].y) * sin(thida);
+			model.cordinatesRotate[count][i].y = (model.cordinates[i].x) * sin(thida) + (model.cordinates[i].y) * cos(thida);
+			model.edgeDerivativeXRotate[count][i] = model.edgeDerivativeX[i] * cos(thida) - model.edgeDerivativeY[i] * sin(thida);
+			model.edgeDerivativeYRotate[count][i] = model.edgeDerivativeX[i] * sin(thida) + model.edgeDerivativeY[i] * cos(thida);
+
+		}
+		count++;
+	}
+	////cvSaveImage("Edges.bmp",imgGDir);
+
+	// free alocated memories
+	delete[] orients;
+	////cvReleaseImage(&imgGDir);
+	cvReleaseMat(&gx);
+	cvReleaseMat(&gy);
+	cvReleaseMat(&nmsEdges);
+
+	ReleaseDoubleMatrix(magMat, Ssize.height);
+
+	model.modelDefined = true;
+	return 1;
+}
+
 double NCC_ModelFinder::FindGeoMatchModelRotateParallel(const void* srcarr, double minScore, double greediness, double& rotation)
 {
 	CvMat* Sdx = 0, * Sdy = 0;
@@ -739,7 +1101,7 @@ double NCC_ModelFinder::FindGeoMatchModelRotateParallel(const void* srcarr, doub
 	return score;
 }
 
-double NCC_ModelFinder::FindGeoMatchModelRotateParallelSSE(const void* srcarr, double minScore, double greediness, double& rotation)
+double NCC_ModelFinder::FindGeoMatchModelRotateParallelSSE(const void* srcarr,Cpp::ModelDefine& model,SearchROI tmpRoi,int x,int y, int rotateStart, int rotateEnd,double minScore, double greediness, double& rotation)
 {
 	CvMat* Sdx = 0, * Sdy = 0;
 
@@ -749,14 +1111,14 @@ double NCC_ModelFinder::FindGeoMatchModelRotateParallelSSE(const void* srcarr, d
 
 	CvMat srcstub, * src = (CvMat*)srcarr;
 	src = cvGetMat(src, &srcstub);
-	if (CV_MAT_TYPE(src->type) != CV_8UC1 || !m_modelDefine.modelDefined)
+	if (CV_MAT_TYPE(src->type) != CV_8UC1 || !model.modelDefined)
 	{
 		return 0;
 	}
-	double* resultScore = new double[m_modelDefine.totalDegree];
-	CvPoint* tmpPoint = new CvPoint[m_modelDefine.totalDegree];
+	double* resultScore = new double[model.totalDegree];
+	CvPoint* tmpPoint = new CvPoint[model.totalDegree];
 
-	for (int i = 0; i < m_modelDefine.totalDegree; i++)
+	for (int i = 0; i < model.totalDegree; i++)
 	{
 		resultScore[i] = 0;
 		tmpPoint[i].x = 0;
@@ -777,8 +1139,8 @@ double NCC_ModelFinder::FindGeoMatchModelRotateParallelSSE(const void* srcarr, d
 	cvSobel(src, Sdy, 0, 1, 3); // find Y derivatives
 
 	// stoping criterias to search for model
-	double normMinScore = minScore / m_modelDefine.noOfCordinates; // precompute minumum score 
-	double normGreediness = ((1 - greediness * minScore) / (1 - greediness)) / m_modelDefine.noOfCordinates; // precompute greedniness 
+	double normMinScore = minScore / model.noOfCordinates; // precompute minumum score 
+	double normGreediness = ((1 - greediness * minScore) / (1 - greediness)) / model.noOfCordinates; // precompute greedniness 
 
 #pragma omp parallel for
 	for (i = 0; i < Ssize.height; i++)
@@ -808,15 +1170,24 @@ double NCC_ModelFinder::FindGeoMatchModelRotateParallelSSE(const void* srcarr, d
 		}
 	}
 
+	int height = Ssize.height;
+	int width = Ssize.width;
+	int degreeStart = 0;
+
+	if (x != 0)
+		height = x + 80;
+	if (y != 0)
+		width = y + 80;
+
 #pragma omp parallel for
-	for (i = 0; i < Ssize.height; i++)
+	for (i = x; i < height; i++)
 	{
 #pragma omp parallel for
 
-		for (j = 0; j < Ssize.width; j++)
+		for (j = y; j < width; j++)
 		{
 #pragma omp parallel for
-			for (int degree = 0; degree < m_modelDefine.totalDegree; degree++)
+			for (int degree = degreeStart; degree < model.totalDegree; degree++)
 			{
 				double sumOfCoords = 0;
 				double partialScore = 0;
@@ -827,8 +1198,7 @@ double NCC_ModelFinder::FindGeoMatchModelRotateParallelSSE(const void* srcarr, d
 				double iTx, iTy, iSx, iSy;
 				double gradMag;
 				int curX, curY;
-
-				for (int m = 0; m < m_modelDefine.noOfCordinates; m++)
+				for (int m = 0; m < model.noOfCordinates; m++)
 				{
 					/*		__m128 m1, m2, m3, m4;
 
@@ -836,10 +1206,10 @@ double NCC_ModelFinder::FindGeoMatchModelRotateParallelSSE(const void* srcarr, d
 							__m128* pSrc2 = (__m128*) pArray2;
 							__m128* pDest = (__m128*) pResult;*/
 
-					curX = i + m_modelDefine.cordinatesRotate[degree][m].x;	// template X coordinate
-					curY = j + m_modelDefine.cordinatesRotate[degree][m].y; // template Y coordinate
-					iTx = m_modelDefine.edgeDerivativeXRotate[degree][m];	// template X derivative
-					iTy = m_modelDefine.edgeDerivativeYRotate[degree][m];    // template Y derivative
+					curX = i + model.cordinatesRotate[degree][m].x;	// template X coordinate
+					curY = j + model.cordinatesRotate[degree][m].y; // template Y coordinate
+					iTx = model.edgeDerivativeXRotate[degree][m];	// template X derivative
+					iTy = model.edgeDerivativeYRotate[degree][m];    // template Y derivative
 
 
 					if (curX<0 || curY<0 || curX>Ssize.height - 1 || curY>Ssize.width - 1)
@@ -854,7 +1224,7 @@ double NCC_ModelFinder::FindGeoMatchModelRotateParallelSSE(const void* srcarr, d
 					if ((iSx != 0 || iSy != 0) && (iTx != 0 || iTy != 0))
 					{
 						//partial Sum  = Sum of(((Source X derivative* Template X drivative) + Source Y derivative * Template Y derivative)) / Edge magnitude of(Template)* edge magnitude of(Source))
-						partialSum = partialSum + ((iSx * iTx) + (iSy * iTy)) * (m_modelDefine.edgeMagnitude[m] * matGradMag[curX][curY]);
+						partialSum = partialSum + ((iSx * iTx) + (iSy * iTy)) * (model.edgeMagnitude[m] * matGradMag[curX][curY]);
 
 					}
 
@@ -882,7 +1252,7 @@ double NCC_ModelFinder::FindGeoMatchModelRotateParallelSSE(const void* srcarr, d
 	//);
 	int tmpindex = 0;
 	double tmpScore = 0;
-	for (int i = 0; i < m_modelDefine.totalDegree; i++)
+	for (int i = 0; i < model.totalDegree; i++)
 	{
 		/*cout << resultScore[i] << ", " << i << endl;*/
 		if (resultScore[i] > 0 && resultScore[i] <= 1)
@@ -899,13 +1269,13 @@ double NCC_ModelFinder::FindGeoMatchModelRotateParallelSSE(const void* srcarr, d
 
 	result.location.x = tmpPoint[tmpindex].x;			// result coordinate X		
 	result.location.y = tmpPoint[tmpindex].y;			// result coordinate Y
-	if (roi.isEnable)
+	if (tmpRoi.isEnable)
 	{
-		result.location.x += roi.rect.y;
-		result.location.y += roi.rect.x;
+		result.location.x += tmpRoi.rect.y;
+		result.location.y += tmpRoi.rect.x;
 	}
 	result.score = score;
-	result.rotation = m_modelDefine.degreeStart + m_modelDefine.rotationResolution * rotation;
+	result.rotation = model.degreeStart + model.rotationResolution * rotation;
 
 	// free used resources and return score
 	ReleaseDoubleMatrix(matGradMag, Ssize.height);

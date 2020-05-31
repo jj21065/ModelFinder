@@ -6,60 +6,60 @@
 using namespace CLI;
 using namespace System;
 using namespace System::Drawing;
-//int main()
-//{
-//	
-//	ModelFinder^ modelFinder = gcnew ModelFinder();
-//	Bitmap^ image = safe_cast<Bitmap^>(Image::FromFile(".//template1.jpg"));
-//	Bitmap^ image2 = safe_cast<Bitmap^>(Image::FromFile(".//白光HR點膠上方正面.tif"));
-//
-//	modelFinder->SetModelPara(-15, 15, 0.1, 0.7);
-//	modelFinder->CreateModelFromImage(image);
-//
-//	modelFinder->SerializeModel("template.mod");
-//	modelFinder->DeSerializeModel("template.mod");
-//	int high = 140; 
-//	int low = 100;
-//	modelFinder->SetROI(1230, 1400, 200, 300);
-//	modelFinder->SetSobelThreshold(170, 210);
+int main()
+{
+	
+	ModelFinder^ modelFinder = gcnew ModelFinder();
+	Bitmap^ image = safe_cast<Bitmap^>(Image::FromFile(".//template1.jpg"));
+	Bitmap^ image2 = safe_cast<Bitmap^>(Image::FromFile(".//Test_Golden.tif"));
+
+	modelFinder->SetModelPara(-5, 5, 0.051, 0.5);
+	modelFinder->CreateModelFromImage(image);
+
+	/*modelFinder->SerializeModel("template.mod");
+	modelFinder->DeSerializeModel("template.mod");*/
+	int high = 140; 
+	int low = 100;
+	modelFinder->SetROI(1100, 850, 300, 250);
+	modelFinder->SetSobelThreshold(170, 210);
 //	modelFinder->SetROI(100, 100, 400, 300);
-//	modelFinder->showCvImage = false;
-//
-//	modelFinder->ModelFind(image2);
-//	while(1)
-//	{
-//		char c = cvWaitKey(4);
-//		if (c == 's')
-//		{
-//			std::cout << "S" << std::endl;
-//			modelFinder->showCvImage = false;
-//
-//			modelFinder->ModelFind(image2);
-//			std::cout <<std::endl << "ModelFind at (" << modelFinder->searchResult->X << "< " << modelFinder->searchResult->Y << ")"<<std::endl;
-//		}
-//		if (c == '+')
-//		{
-//			Bitmap^ image = safe_cast<Bitmap^>(Image::FromFile(".//template1.jpg"));
-//			/*high += 10;
-//			low += 10;*/
-//			std::cout << std::endl << "high" << std::endl;
-//			modelFinder->SetSobelThreshold(high, low);
-//			modelFinder->CreateModelFromImage(image);
-//			
-//		}
-//		if (c == '-')
-//		{
-//			Bitmap^ image = safe_cast<Bitmap^>(Image::FromFile(".//template1.jpg"));
-//			/*high-= 10;
-//			low -= 10;*/
-//			std::cout << std::endl << "low" << std::endl;
-//			modelFinder->SetSobelThreshold(high, low);
-//			modelFinder->CreateModelFromImage(image);
-//		
-//		}
-//	}
-//
-//}
+	modelFinder->showCvImage = true;
+
+	modelFinder->ModelFind(image2);
+	while(1)
+	{
+		char c = cvWaitKey(4);
+		if (c == 's')
+		{
+			std::cout << "S" << std::endl;
+			modelFinder->showCvImage = false;
+			Bitmap^ image2 = safe_cast<Bitmap^>(Image::FromFile(".//Test_Golden.tif"));
+			modelFinder->ModelFind(image2);
+			std::cout <<std::endl << "ModelFind at (" << modelFinder->searchResult->X << "< " << modelFinder->searchResult->Y << ")"<<std::endl;
+		}
+		if (c == '+')
+		{
+			Bitmap^ image = safe_cast<Bitmap^>(Image::FromFile(".//template1.jpg"));
+			/*high += 10;
+			low += 10;*/
+			std::cout << std::endl << "high" << std::endl;
+			modelFinder->SetSobelThreshold(high, low);
+			modelFinder->CreateModelFromImage(image);
+			
+		}
+		if (c == '-')
+		{
+			Bitmap^ image = safe_cast<Bitmap^>(Image::FromFile(".//template1.jpg"));
+			/*high-= 10;
+			low -= 10;*/
+			std::cout << std::endl << "low" << std::endl;
+			modelFinder->SetSobelThreshold(high, low);
+			modelFinder->CreateModelFromImage(image);
+		
+		}
+	}
+
+}
 
 ModelFinder::ModelFinder()
 {

@@ -14,6 +14,7 @@ namespace Cpp {
 
 		bool showCvImage = true;
 		SearchROI roi;
+		SearchROI roi2;
 		SearchResult result;
 		
 
@@ -45,15 +46,19 @@ namespace Cpp {
 		
 		void CreateRotateModel();
 
+		void CreateRotateModel(Cpp::ModelDefine& model);
+
 		void ModelFind(cv::Mat);
 		
 		void PyramidTestFlow(cv::Mat templateImage, cv::Mat srcImage);
 
 		int CreateGeoMatchModel(const void* templateArr, double maxContrast, double minContrast);
 
+		int CreateGeoMatchModel(const void* templateArr, Cpp::ModelDefine& model, double maxContrast, double minContrast);
+
 		double FindGeoMatchModelRotateParallel(const void* srcarr, double minScore, double greediness, double& rotation);
 
-		double FindGeoMatchModelRotateParallelSSE(const void* srcarr, double minScore, double greediness, double& rotation);
+		double FindGeoMatchModelRotateParallelSSE(const void* srcarr, Cpp::ModelDefine& model, SearchROI tmpRoi, int x, int y, int rotateStart, int rotateEnd, double minScore, double greediness, double& rotation);
 
 		void DrawContours(IplImage* pImage, CvPoint COG, CvScalar, int);
 
