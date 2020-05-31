@@ -31,7 +31,7 @@ namespace ModelFinderTestWPF
             if (image != null)
             {
                 modelFinder.SetModelPara(-15, 15, 0.1, 0.6);
-                modelFinder.SetROI(190, 190, 200, 200);
+                modelFinder.SetROI(200, 100, 300, 200);
                 modelFinder.SetSobelThreshold(160, 200);
                 modelFinder.showCvImage = true;
                 modelFinder.CreateModelFromImage(image);
@@ -41,7 +41,7 @@ namespace ModelFinderTestWPF
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            Bitmap image2 = new Bitmap("image3.jpg");
+            Bitmap image2 = new Bitmap("白光HR點膠上方正面.tif");
                 if(image2 != null)
                     modelFinder.ModelFind(image2);
        

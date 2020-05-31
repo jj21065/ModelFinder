@@ -4,16 +4,16 @@
 exe
 C#
 .cs
-D:\Git\ModelFinder\ModelFinderTestWPF\obj\x64\Release\
+D:\work\Git\ModelFinder\ModelFinderTestWPF\obj\x64\Release\
 ModelFinderTestWPF
 none
 false
 TRACE
-D:\Git\ModelFinder\ModelFinderTestWPF\App.xaml
+D:\work\Git\ModelFinder\ModelFinderTestWPF\App.xaml
 11151548125
 
-6834548285
-15-1900934879
+9435492477
+15-1903919347
 MainWindow.xaml;
 
 True

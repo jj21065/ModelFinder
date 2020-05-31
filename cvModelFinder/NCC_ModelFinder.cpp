@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "NCC_ModelFinder.h"
-#include "C:/opencv/build/include/opencv2/highgui/highgui_c.h"
+#include "opencv2413/include/opencv2/highgui/highgui_c.h"
 #include <windows.h>
 #include <stdio.h> 
 #include <time.h>
@@ -87,64 +87,132 @@ void NCC_ModelFinder::CreatModel(cv::Mat mat)
 	//cvDestroyWindow("Template");
 
 	cvReleaseImage(&grayTemplateImg);
+	delete templateimage;
 }
 
 void NCC_ModelFinder::ModelEraser(int x, int y, int eraserWidth)
 {
 	if (m_modelDefine.modelDefined)
 	{
-		int i = 0;
-		int j = 0;
-		double resolution = m_modelDefine.rotationResolution;
-		double r1 = m_modelDefine.degreeStart;
-		double r2 = m_modelDefine.degreeEnd;
-		int count = 0;
-		std::vector<CvPoint>pointvec;
-		std::vector<double> edgexvec;
-		std::vector<double> edgeyvec;
-	
+		try {
+			int i = 0;
+			int no = 0;
+			int size = m_modelDefine.noOfCordinates;
+			int* xx = new int[m_modelDefine.noOfCordinates];
+			int* yy = new int[m_modelDefine.noOfCordinates];
+			double* ex = new double[m_modelDefine.noOfCordinates];
+			double* ey = new double[m_modelDefine.noOfCordinates];
+			double* m = new double[m_modelDefine.noOfCordinates];
 
-		// change coordinates to reflect center of gravity
-		for (int m = 0; m < m_modelDefine.noOfCordinates; m++)
-		{
-			int temp;
+			fill(xx, xx + size, 0);
+			fill(yy, yy + size, 0);
+			fill(ex, ex + size, 0);
+			fill(ey, ey + size, 0);
+			fill(m, m + size, 0);
 
-			temp = m_modelDefine.cordinates[m].x;
-			m_modelDefine.cordinates[m].x = temp - m_modelDefine.centerOfGravity.x;
-			temp = m_modelDefine.cordinates[m].y;
-			m_modelDefine.cordinates[m].y = temp - m_modelDefine.centerOfGravity.y;
-		}
 
-		m_modelDefine.totalDegree = (m_modelDefine.degreeEnd - m_modelDefine.degreeStart) / m_modelDefine.rotationResolution + 1;
-		
-		m_modelDefine.cordinatesRotate = new CvPoint * [m_modelDefine.totalDegree];		//Coordinates array to store model points	
-		m_modelDefine.edgeDerivativeXRotate = new double* [m_modelDefine.totalDegree];	//gradient in X direction
-		m_modelDefine.edgeDerivativeYRotate = new double* [m_modelDefine.totalDegree]; 	//radient in Y direction	
-		for (int i = 0; i < m_modelDefine.totalDegree; i++)
-		{
-			m_modelDefine.cordinatesRotate[i] = new CvPoint[m_modelDefine.noOfCordinates];
-			m_modelDefine.edgeDerivativeXRotate[i] = new double[m_modelDefine.noOfCordinates];
-			m_modelDefine.edgeDerivativeYRotate[i] = new double[m_modelDefine.noOfCordinates];
-		}
-		for (float degree = r1; degree < r2; degree += resolution)
-		{
-			for (int i = 0; i < m_modelDefine.noOfCordinates; i++)
+
+			for (i = 0; i < size; i++)
 			{
-				float thida = degree * CV_PI / 180.0;
-				m_modelDefine.cordinatesRotate[count][i].x = (m_modelDefine.cordinates[i].x) * cos(thida) - (m_modelDefine.cordinates[i].y) * sin(thida);
-				m_modelDefine.cordinatesRotate[count][i].y = (m_modelDefine.cordinates[i].x) * sin(thida) + (m_modelDefine.cordinates[i].y) * cos(thida);
-				m_modelDefine.edgeDerivativeXRotate[count][i] = m_modelDefine.edgeDerivativeX[i] * cos(thida) - m_modelDefine.edgeDerivativeY[i] * sin(thida);
-				m_modelDefine.edgeDerivativeYRotate[count][i] = m_modelDefine.edgeDerivativeX[i] * sin(thida) + m_modelDefine.edgeDerivativeY[i] * cos(thida);
+
+				if (abs(m_modelDefine.cordinates[i].x + m_modelDefine.centerOfGravity.x - x) < eraserWidth && abs(m_modelDefine.cordinates[i].y + m_modelDefine.centerOfGravity.y - y) < eraserWidth) {
+
+				}
+				else
+				{
+
+					xx[no] = m_modelDefine.cordinates[i].x;
+					yy[no] = m_modelDefine.cordinates[i].y;
+					ex[no] = m_modelDefine.edgeDerivativeX[i];
+					ey[no] = m_modelDefine.edgeDerivativeY[i];
+					m[no] = m_modelDefine.edgeMagnitude[i];
+					++no;
+				}
 
 			}
-			count++;
+			std::cout << "check roi" << std::endl;
+			for (i = 0; i < no; ++i)
+			{
+
+				m_modelDefine.cordinates[i].x = xx[i];
+				m_modelDefine.cordinates[i].y = yy[i];
+				m_modelDefine.edgeDerivativeX[i] = ex[i];
+				m_modelDefine.edgeDerivativeY[i] = ey[i];
+				m_modelDefine.edgeMagnitude[i] = m[i];
+			}
+			m_modelDefine.noOfCordinates = no;
+			std::cout << "no = " << no << std::endl;
+			//std::cout << '\n';
+			//m_modelDefine.Release();
+
+			//m_modelDefine.cordinates = new CvPoint[m_modelDefine.modelWidth * m_modelDefine.modelHeight];		//Allocate memory for coorinates of selected points in template image
+			//m_modelDefine.edgeMagnitude = new double[m_modelDefine.modelWidth * m_modelDefine.modelHeight];		//Allocate memory for edge magnitude for selected points
+			//m_modelDefine.edgeDerivativeX = new double[m_modelDefine.modelWidth * m_modelDefine.modelHeight];			//Allocate memory for edge X derivative for selected points
+			//m_modelDefine.edgeDerivativeY = new double[m_modelDefine.modelWidth * m_modelDefine.modelHeight];			////Allocate memory for edge Y derivative for selected points
+			delete[] xx;
+			delete[] yy;
+			delete[] ex;
+			delete[] ey;
+			delete[] m;
+
+
+			//std::set<int>::iterator iterx = xx.begin();
+			//std::set<int>::iterator itery = yy.begin();
+			//std::set<double>::iterator iterex = edgex.begin();
+			//std::set<double>::iterator iterey = edgey.begin();
+			//std::set<double>::iterator itermag = mag.begin();
+			//
+			//for (i = 0; i < m_modelDefine.noOfCordinates; ++i,++iterx,++itery,++iterex,++iterey,++itermag)
+			//{
+			//	{
+			//		m_modelDefine.cordinates[i].x = (*iterx);
+			//		m_modelDefine.cordinates[i].y = (*itery);
+			//		m_modelDefine.edgeDerivativeX[i] = (*iterex);
+			//		m_modelDefine.edgeDerivativeY[i] = (*iterey);
+			//		m_modelDefine.edgeMagnitude[i] = (*itermag);
+			//	}
+			//}
+			CreateRotateModel();
 		}
-
-
-		CvPoint** cordinatesRotate = nullptr;		//Coordinates array to store model points	
-		double** edgeDerivativeXRotate = nullptr;	//gradient in X direction
-		double** edgeDerivativeYRotate = nullptr;	//radient in Y direction	
+		catch (std::exception &ex)
+		{
+			std::cout << ex.what() << std::endl;
+			getchar();
+		}
 	}
+}
+
+void NCC_ModelFinder::CreateRotateModel()
+{
+	m_modelDefine.ReleaseMatrix();
+	float r1 = m_modelDefine.degreeStart;
+	float r2 = m_modelDefine.degreeEnd;
+	float resolution = m_modelDefine.rotationResolution;
+	m_modelDefine.totalDegree = (r2 - r1) / m_modelDefine.rotationResolution + 1;
+	int count = 0;
+	m_modelDefine.cordinatesRotate = new CvPoint *[m_modelDefine.totalDegree];		//Coordinates array to store model points	
+	m_modelDefine.edgeDerivativeXRotate = new double*[m_modelDefine.totalDegree];	//gradient in X direction
+	m_modelDefine.edgeDerivativeYRotate = new double*[m_modelDefine.totalDegree]; 	//radient in Y direction	
+	for (int i = 0; i < m_modelDefine.totalDegree; i++)
+	{
+		m_modelDefine.cordinatesRotate[i] = new CvPoint[m_modelDefine.noOfCordinates];
+		m_modelDefine.edgeDerivativeXRotate[i] = new double[m_modelDefine.noOfCordinates];
+		m_modelDefine.edgeDerivativeYRotate[i] = new double[m_modelDefine.noOfCordinates];
+	}
+	for (float degree = r1; degree < r2; degree += resolution)
+	{
+		for (int i = 0; i < m_modelDefine.noOfCordinates; i++)
+		{
+			float thida = degree * CV_PI / 180.0;
+			m_modelDefine.cordinatesRotate[count][i].x = (m_modelDefine.cordinates[i].x) * cos(thida) - (m_modelDefine.cordinates[i].y) * sin(thida);
+			m_modelDefine.cordinatesRotate[count][i].y = (m_modelDefine.cordinates[i].x) * sin(thida) + (m_modelDefine.cordinates[i].y) * cos(thida);
+			m_modelDefine.edgeDerivativeXRotate[count][i] = m_modelDefine.edgeDerivativeX[i] * cos(thida) - m_modelDefine.edgeDerivativeY[i] * sin(thida);
+			m_modelDefine.edgeDerivativeYRotate[count][i] = m_modelDefine.edgeDerivativeX[i] * sin(thida) + m_modelDefine.edgeDerivativeY[i] * cos(thida);
+
+		}
+		count++;
+	}
+	m_modelDefine.modelDefined = true;
 }
 
 void NCC_ModelFinder::ModelFind(cv::Mat mat)
@@ -161,8 +229,7 @@ void NCC_ModelFinder::ModelFind(cv::Mat mat)
 	clock_t start_time1 = clock();
 
 	IplImage* searchImage = new IplImage(mat);
-	if(roi.isEnable)	
-		cvSetImageROI(searchImage, roi.rect);
+
 
 	if (searchImage == NULL)
 	{
@@ -171,22 +238,7 @@ void NCC_ModelFinder::ModelFind(cv::Mat mat)
 	}
 
 	CvSize searchSize;
-	if (roi.isEnable)
-	{
-		if (roi.rect.x < 0)
-			roi.rect.x = 0;
-		if (roi.rect.y < 0)
-			roi.rect.y;
-		if (roi.rect.x + roi.rect.width > searchImage->width - 1)
-			roi.rect.width = searchImage->width - 1 - roi.rect.x;
-		if (roi.rect.x + roi.rect.height > searchImage->height - 1)
-			roi.rect.height= searchImage->height - 1 - roi.rect.y;
-		searchSize = cvSize(roi.rect.width, roi.rect.height);
-	}
-	else
-	{
-		searchSize = cvSize(searchImage->width, searchImage->height);
-	}
+	searchSize = cvSize(searchImage->width, searchImage->height);
 	IplImage* graySearchImg = cvCreateImage(searchSize, IPL_DEPTH_8U, 1);
 
 	// Convert color image to gray image. 
@@ -195,6 +247,24 @@ void NCC_ModelFinder::ModelFind(cv::Mat mat)
 	else
 	{
 		cvCopy(searchImage, graySearchImg);
+	}
+	if (roi.isEnable)
+	{
+		if (roi.rect.x < 0)
+			roi.rect.x = 0;
+		if (roi.rect.y < 0)
+			roi.rect.y;
+		if (roi.rect.x + roi.rect.width > searchImage->width)
+			roi.rect.width = searchImage->width - roi.rect.x;
+		if (roi.rect.y + roi.rect.height > searchImage->height)
+			roi.rect.height = searchImage->height - roi.rect.y;
+
+		cvSetImageROI(graySearchImg, roi.rect);
+	}
+	else
+	{
+		cvResetImageROI(graySearchImg);
+		
 	}
 	cout << " Finding Shape Model.." << " Minumum Score = " << minScore << " Greediness = " << greediness << "\n\n";
 	cout << " ------------------------------------\n";
@@ -212,11 +282,12 @@ void NCC_ModelFinder::ModelFind(cv::Mat mat)
 	{
 		result.isFind = true;
 		cout << " Found at [" << result.location.x << ", " << result.location.y<< ", Rotation " << result.rotation << "]\n Score = " << score << "\n Searching Time = " << total_time * 1000 << "ms";
-		
+	
+		DrawContours(searchImage, result.location, CV_RGB(0, 255, 0), 1, (int)rotation);
+		cvResetImageROI(graySearchImg);
 		if (showCvImage)
 		{
-			cvResetImageROI(searchImage);
-			DrawContours(searchImage, result.location, CV_RGB(0, 255, 0), 1, (int)rotation);
+			
 			cvNamedWindow("Search Image", CV_WINDOW_AUTOSIZE);
 			cvShowImage("Search Image", searchImage);
 		}
@@ -240,6 +311,7 @@ void NCC_ModelFinder::ModelFind(cv::Mat mat)
 	cvDestroyWindow("Search Image");*/
 	
 	cvReleaseImage(&graySearchImg);
+	delete searchImage;
 }
 
 int NCC_ModelFinder::CreateGeoMatchModel(const void* templateArr, double maxContrast, double minContrast)

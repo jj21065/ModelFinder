@@ -1,6 +1,6 @@
 #pragma once
-#include "C:/opencv/build/include/opencv2/imgproc/imgproc_c.h"
-#include "C:/opencv/build/include/opencv2/core/core.hpp"
+#include "opencv2/imgproc/imgproc_c.h"
+#include "opencv2/core/core.hpp"
 
 #pragma comment(lib, "opencv2413/x64/vc14/lib/opencv_core2413d.lib")
 #pragma comment(lib, "opencv2413/x64/vc14/lib/opencv_highgui2413d.lib")
@@ -25,7 +25,7 @@ namespace Cpp {
 
 		int totalDegree = 0;
 		CvPoint			centerOfGravity;	//Center of gravity of template 
-
+		
 		bool			modelDefined;
 		double degreeStart, degreeEnd;
 		double rotationResolution;
@@ -36,7 +36,7 @@ namespace Cpp {
 		~ModelDefine();
 
 		void Release();
-		
+		void ReleaseMatrix();
 	
 	};
 

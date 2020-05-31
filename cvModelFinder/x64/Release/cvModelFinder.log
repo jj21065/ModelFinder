@@ -1,22 +1,29 @@
 ﻿  pch.cpp
   AssemblyInfo.cpp
   cvModelFinder.cpp
-D:\Git\ModelFinder\cvModelFinder\cvModelFinder.h(45,19): warning C4244: '引數': 將 'double' 轉換為 'float'，由於類型不同，可能導致資料遺失
+d:\work\git\modelfinder\cvmodelfinder\cvmodelfinder.h(45): warning C4244: '引數': 將 'double' 轉換為 'float'，由於類型不同，可能導致資料遺失
+d:\work\git\modelfinder\cvmodelfinder\cvmodelfinder.h(46): warning C4244: '引數': 將 'double' 轉換為 'float'，由於類型不同，可能導致資料遺失
   ModelDefine.cpp
   NCC_ModelFinder.cpp
-D:\Git\ModelFinder\cvModelFinder\cvModelFinder.h(46,19): warning C4244: '引數': 將 'double' 轉換為 'float'，由於類型不同，可能導致資料遺失
-D:\Git\ModelFinder\cvModelFinder\NCC_ModelFinder.cpp(32,21): warning C4244: '=': 將 'double' 轉換為 'int'，由於類型不同，可能導致資料遺失
-D:\Git\ModelFinder\cvModelFinder\NCC_ModelFinder.cpp(33,21): warning C4244: '=': 將 'double' 轉換為 'int'，由於類型不同，可能導致資料遺失
-D:\Git\ModelFinder\cvModelFinder\NCC_ModelFinder.cpp(34,24): warning C4244: '=': 將 'double' 轉換為 'int'，由於類型不同，可能導致資料遺失
-D:\Git\ModelFinder\cvModelFinder\NCC_ModelFinder.cpp(35,26): warning C4244: '=': 將 'double' 轉換為 'int'，由於類型不同，可能導致資料遺失
-D:\Git\ModelFinder\cvModelFinder\NCC_ModelFinder.cpp(410,53): warning C4244: '=': 將 'double' 轉換為 'int'，由於類型不同，可能導致資料遺失
-D:\Git\ModelFinder\cvModelFinder\NCC_ModelFinder.cpp(421,20): warning C4244: '正在初始化': 將 'double' 轉換為 'float'，由於類型不同，可能導致資料遺失
-D:\Git\ModelFinder\cvModelFinder\NCC_ModelFinder.cpp(421,59): warning C4244: '+=': 將 'double' 轉換為 'float'，由於類型不同，可能導致資料遺失
-D:\Git\ModelFinder\cvModelFinder\NCC_ModelFinder.cpp(425,16): warning C4244: '正在初始化': 將 'double' 轉換為 'float'，由於類型不同，可能導致資料遺失
-D:\Git\ModelFinder\cvModelFinder\NCC_ModelFinder.cpp(426,94): warning C4244: '=': 將 'float' 轉換為 'int'，由於類型不同，可能導致資料遺失
-D:\Git\ModelFinder\cvModelFinder\NCC_ModelFinder.cpp(427,94): warning C4244: '=': 將 'float' 轉換為 'int'，由於類型不同，可能導致資料遺失
-D:\Git\ModelFinder\cvModelFinder\NCC_ModelFinder.cpp(535,12): warning C4101: 'gradMag': 未參考的區域變數
+d:\work\git\modelfinder\cvmodelfinder\ncc_modelfinder.cpp(33): warning C4244: '=': 將 'double' 轉換為 'int'，由於類型不同，可能導致資料遺失
+d:\work\git\modelfinder\cvmodelfinder\ncc_modelfinder.cpp(34): warning C4244: '=': 將 'double' 轉換為 'int'，由於類型不同，可能導致資料遺失
+d:\work\git\modelfinder\cvmodelfinder\ncc_modelfinder.cpp(35): warning C4244: '=': 將 'double' 轉換為 'int'，由於類型不同，可能導致資料遺失
+d:\work\git\modelfinder\cvmodelfinder\ncc_modelfinder.cpp(36): warning C4244: '=': 將 'double' 轉換為 'int'，由於類型不同，可能導致資料遺失
+d:\work\git\modelfinder\cvmodelfinder\ncc_modelfinder.cpp(160): warning C4244: '正在初始化': 將 'double' 轉換為 'float'，由於類型不同，可能導致資料遺失
+d:\work\git\modelfinder\cvmodelfinder\ncc_modelfinder.cpp(161): warning C4244: '正在初始化': 將 'double' 轉換為 'float'，由於類型不同，可能導致資料遺失
+d:\work\git\modelfinder\cvmodelfinder\ncc_modelfinder.cpp(162): warning C4244: '正在初始化': 將 'double' 轉換為 'float'，由於類型不同，可能導致資料遺失
+d:\work\git\modelfinder\cvmodelfinder\ncc_modelfinder.cpp(163): warning C4244: '=': 將 'double' 轉換為 'int'，由於類型不同，可能導致資料遺失
+d:\work\git\modelfinder\cvmodelfinder\ncc_modelfinder.cpp(178): warning C4244: '正在初始化': 將 'double' 轉換為 'float'，由於類型不同，可能導致資料遺失
+d:\work\git\modelfinder\cvmodelfinder\ncc_modelfinder.cpp(179): warning C4244: '=': 將 'float' 轉換為 'int'，由於類型不同，可能導致資料遺失
+d:\work\git\modelfinder\cvmodelfinder\ncc_modelfinder.cpp(180): warning C4244: '=': 將 'float' 轉換為 'int'，由於類型不同，可能導致資料遺失
+d:\work\git\modelfinder\cvmodelfinder\ncc_modelfinder.cpp(499): warning C4244: '=': 將 'double' 轉換為 'int'，由於類型不同，可能導致資料遺失
+d:\work\git\modelfinder\cvmodelfinder\ncc_modelfinder.cpp(510): warning C4244: '正在初始化': 將 'double' 轉換為 'float'，由於類型不同，可能導致資料遺失
+d:\work\git\modelfinder\cvmodelfinder\ncc_modelfinder.cpp(510): warning C4244: '+=': 將 'double' 轉換為 'float'，由於類型不同，可能導致資料遺失
+d:\work\git\modelfinder\cvmodelfinder\ncc_modelfinder.cpp(514): warning C4244: '正在初始化': 將 'double' 轉換為 'float'，由於類型不同，可能導致資料遺失
+d:\work\git\modelfinder\cvmodelfinder\ncc_modelfinder.cpp(515): warning C4244: '=': 將 'float' 轉換為 'int'，由於類型不同，可能導致資料遺失
+d:\work\git\modelfinder\cvmodelfinder\ncc_modelfinder.cpp(516): warning C4244: '=': 將 'float' 轉換為 'int'，由於類型不同，可能導致資料遺失
+d:\work\git\modelfinder\cvmodelfinder\ncc_modelfinder.cpp(624): warning C4101: 'gradMag': 未參考的區域變數
+d:\work\git\modelfinder\cvmodelfinder\ncc_modelfinder.cpp(800): warning C4101: 'gradMag': 未參考的區域變數
   正在產生程式碼...
-D:\Git\ModelFinder\cvModelFinder\NCC_ModelFinder.cpp(711,12): warning C4101: 'gradMag': 未參考的區域變數
-  .NETFramework,Version=v4.6.2.AssemblyAttributes.cpp
-  cvModelFinder.vcxproj -> D:\Git\ModelFinder\x64\Release\cvModelFinder.dll
+  .NETFramework,Version=v4.0.AssemblyAttributes.cpp
+  cvModelFinder.vcxproj -> D:\work\Git\ModelFinder\x64\Release\cvModelFinder.dll
