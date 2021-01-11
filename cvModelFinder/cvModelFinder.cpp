@@ -20,7 +20,7 @@ int main()
 	modelFinder->DeSerializeModel("template.mod");*/
 	int high = 140; 
 	int low = 100;
-	modelFinder->SetROI(1100, 850, 300, 250);
+	modelFinder->SetROI(1100, 850, 700, 700);
 	modelFinder->SetSobelThreshold(170, 210);
 //	modelFinder->SetROI(100, 100, 400, 300);
 	modelFinder->showCvImage = true;
@@ -40,8 +40,8 @@ int main()
 		if (c == '+')
 		{
 			Bitmap^ image = safe_cast<Bitmap^>(Image::FromFile(".//template1.jpg"));
-			/*high += 10;
-			low += 10;*/
+			high += 10;
+			low += 10;
 			std::cout << std::endl << "high" << std::endl;
 			modelFinder->SetSobelThreshold(high, low);
 			modelFinder->CreateModelFromImage(image);
@@ -50,8 +50,8 @@ int main()
 		if (c == '-')
 		{
 			Bitmap^ image = safe_cast<Bitmap^>(Image::FromFile(".//template1.jpg"));
-			/*high-= 10;
-			low -= 10;*/
+			high-= 10;
+			low -= 10;
 			std::cout << std::endl << "low" << std::endl;
 			modelFinder->SetSobelThreshold(high, low);
 			modelFinder->CreateModelFromImage(image);
@@ -209,7 +209,7 @@ void ModelFinder::DrawModel(Bitmap^ _image)
 void ModelFinder::SerializeModel(System::String^ filename)
 {
 	modelDefine = gcnew ModelDefineDotNet();
-	modelDefine->searshScore = modelFinder->m_modelDefine.searshScore;
+	/*modelDefine->searshScore = modelFinder->m_modelDefine.searshScore;
 	modelDefine->noOfCordinates = modelFinder->m_modelDefine.noOfCordinates;
 	modelDefine->modelHeight = modelFinder->m_modelDefine.modelHeight;
 	modelDefine->modelWidth = modelFinder->m_modelDefine.modelWidth;
@@ -237,7 +237,7 @@ void ModelFinder::SerializeModel(System::String^ filename)
 		modelDefine->edgeMagnitude[i] = modelFinder->m_modelDefine.edgeMagnitude[i];
 		modelDefine->edgeDerivativeX[i] = modelFinder->m_modelDefine.edgeDerivativeX[i];
 		modelDefine->edgeDerivativeY[i] = modelFinder->m_modelDefine.edgeDerivativeY[i];
-	}
+	}*/
 
 	SerializeProject::SaveSerialize(modelDefine, filename);
 }
@@ -246,7 +246,7 @@ void ModelFinder::DeSerializeModel(System::String^ filename)
 {
 	modelDefine = SerializeProject::LoadDeserialize(filename);
 
-	modelFinder->m_modelDefine.searshScore = modelDefine->searshScore;
+	/*modelFinder->m_modelDefine.searshScore = modelDefine->searshScore;
 	modelFinder->m_modelDefine.noOfCordinates = modelDefine->noOfCordinates;
 	modelFinder->m_modelDefine.modelHeight = modelDefine->modelHeight;
 	modelFinder->m_modelDefine.modelWidth = modelDefine->modelWidth;
@@ -275,7 +275,7 @@ void ModelFinder::DeSerializeModel(System::String^ filename)
 		modelFinder->m_modelDefine.edgeMagnitude[i]=modelDefine->edgeMagnitude[i];
 		modelFinder->m_modelDefine.edgeDerivativeX[i] = modelDefine->edgeDerivativeX[i];
 		modelFinder->m_modelDefine.edgeDerivativeY[i] = modelDefine->edgeDerivativeY[i];
-	}
+	}*/
 
 	modelFinder->CreateRotateModel();
 	
