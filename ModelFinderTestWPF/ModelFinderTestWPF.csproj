@@ -76,7 +76,8 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="cvModelFinder">
+    <Reference Include="cvModelFinder, Version=1.0.7688.38200, Culture=neutral, processorArchitecture=AMD64">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\x64\Release\cvModelFinder.dll</HintPath>
     </Reference>
     <Reference Include="System" />
