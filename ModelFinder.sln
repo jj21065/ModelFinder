@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.1022
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29519.87
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cvModelFinder", "cvModelFinder\cvModelFinder.vcxproj", "{B36874CB-BBD7-4678-9AE7-8B4A013991C0}"
 EndProject
@@ -29,8 +29,8 @@ Global
 		{B36874CB-BBD7-4678-9AE7-8B4A013991C0}.Release|x86.Build.0 = Release|Win32
 		{EAC6E3C1-511E-4B71-9425-F004E2F05BB6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{EAC6E3C1-511E-4B71-9425-F004E2F05BB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EAC6E3C1-511E-4B71-9425-F004E2F05BB6}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{EAC6E3C1-511E-4B71-9425-F004E2F05BB6}.Debug|x64.Build.0 = Debug|Any CPU
+		{EAC6E3C1-511E-4B71-9425-F004E2F05BB6}.Debug|x64.ActiveCfg = Debug|x64
+		{EAC6E3C1-511E-4B71-9425-F004E2F05BB6}.Debug|x64.Build.0 = Debug|x64
 		{EAC6E3C1-511E-4B71-9425-F004E2F05BB6}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{EAC6E3C1-511E-4B71-9425-F004E2F05BB6}.Debug|x86.Build.0 = Debug|Any CPU
 		{EAC6E3C1-511E-4B71-9425-F004E2F05BB6}.Release|Any CPU.ActiveCfg = Release|Any CPU

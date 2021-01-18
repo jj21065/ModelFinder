@@ -43,15 +43,15 @@ namespace Cpp {
 		void CreatModel(cv::Mat);
 
 		void ModelEraser(int x, int y, int eraserWidth);
+
+		void ModelEraserMask(int x, int y, int eraserWidth);
 		
 		void CreateRotateModel();
 
 		void CreateRotateModel(Cpp::ModelDefine& model);
-
-		void ModelFind(cv::Mat);
 		
-		void PyramidTestFlow(cv::Mat templateImage, cv::Mat srcImage);
-
+		void ModelFind(cv::Mat);
+	
 		int CreateGeoMatchModel(const void* templateArr, Cpp::ModelDefine& model, double maxContrast, double minContrast);
 
 		double FindGeoMatchModelRotateParallelSSE(const void* srcarr, Cpp::ModelDefine& model, SearchROI tmpRoi, int x, int y, int xend, int yend, int rotateStart, int rotateEnd, double minScore, double greediness, double& rotation);
@@ -62,7 +62,7 @@ namespace Cpp {
 
 		void DrawContours(IplImage* source, CvPoint COG, CvScalar color, int lineWidth, int rotation);
 
-		void DrawContours(IplImage* source, ModelDefine model, CvScalar color, int lineWidth);
+		void DrawContours(IplImage* source, ModelDefine &model, CvScalar color, int lineWidth);
 	private:
 
 	};

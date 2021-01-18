@@ -25,15 +25,27 @@ int main()
 //	modelFinder->SetROI(100, 100, 400, 300);
 	modelFinder->showCvImage = true;
 
-	modelFinder->ModelFind(image2);
+	//modelFinder->ModelFind(image2);
+
+	int eraserWidth = 20;
+	int x = 31;
+	int y = 30;
 	while(1)
 	{
 		char c = cvWaitKey(4);
+		if (c == 'm')
+		{
+			modelFinder->SerializeModel(".//testModel.mod");
+		}
+		if (c == ',')
+		{
+			modelFinder->DeSerializeModel(".//testModel.mod");
+		}
 		if (c == 's')
 		{
 			std::cout << "S" << std::endl;
-			modelFinder->showCvImage = false;
-			Bitmap^ image2 = safe_cast<Bitmap^>(Image::FromFile(".//Test_Golden.tif"));
+			modelFinder->showCvImage = true;
+		//	Bitmap^ image2 = safe_cast<Bitmap^>(Image::FromFile(".//Test_Golden.tif"));
 			modelFinder->ModelFind(image2);
 			std::cout <<std::endl << "ModelFind at (" << modelFinder->searchResult->X << "< " << modelFinder->searchResult->Y << ")"<<std::endl;
 		}
@@ -56,6 +68,26 @@ int main()
 			modelFinder->SetSobelThreshold(high, low);
 			modelFinder->CreateModelFromImage(image);
 		
+		}
+		if (c == '5')
+		{
+			x -= 2;
+			modelFinder->EraseModel(x, y, eraserWidth);
+		}
+		if (c == '2')
+		{
+			x += 2;
+			modelFinder->EraseModel(x, y, eraserWidth);
+		}
+		if (c == '1')
+		{
+			y -= 2;
+			modelFinder->EraseModel(x, y, eraserWidth);
+		}
+		if (c == '3')
+		{
+			y += 2;
+			modelFinder->EraseModel(x, y, eraserWidth);
 		}
 	}
 
@@ -208,76 +240,90 @@ void ModelFinder::DrawModel(Bitmap^ _image)
 
 void ModelFinder::SerializeModel(System::String^ filename)
 {
-	modelDefine = gcnew ModelDefineDotNet();
-	/*modelDefine->searshScore = modelFinder->m_modelDefine.searshScore;
-	modelDefine->noOfCordinates = modelFinder->m_modelDefine.noOfCordinates;
-	modelDefine->modelHeight = modelFinder->m_modelDefine.modelHeight;
-	modelDefine->modelWidth = modelFinder->m_modelDefine.modelWidth;
-	modelDefine->totalDegree = modelFinder->m_modelDefine.totalDegree;
-	modelDefine->modelDefined = modelFinder->m_modelDefine.modelDefined;
-	modelDefine->degreeStart = modelFinder->m_modelDefine.degreeStart;
-	modelDefine->degreeEnd = modelFinder->m_modelDefine.degreeEnd;
-	modelDefine->rotationResolution = modelFinder->m_modelDefine.rotationResolution;
-	modelDefine->SobelLow = modelFinder->m_modelDefine.SobelLow;
-	modelDefine->SobelHigh = modelFinder->m_modelDefine.SobelHigh;
+	int size = modelFinder->PrymidSize;
+	modelDefine = gcnew ModelDefinDotNet();
+	modelDefine->models = gcnew array<ModelDefinePyramidDotNet^>(size);
+	for (int p = 0; p < size; p++) {
+		modelDefine->models[p] = gcnew ModelDefinePyramidDotNet();
+		modelDefine->models[p]->searshScore = modelFinder->m_modelDefine[p].searshScore;
+		modelDefine->models[p]->noOfCordinates = modelFinder->m_modelDefine[p].noOfCordinates;
+		modelDefine->models[p]->modelHeight = modelFinder->m_modelDefine[p].modelHeight;
+		modelDefine->models[p]->modelWidth = modelFinder->m_modelDefine[p].modelWidth;
+		modelDefine->models[p]->totalDegree = modelFinder->m_modelDefine[p].totalDegree;
+		modelDefine->models[p]->modelDefined = modelFinder->m_modelDefine[p].modelDefined;
+		modelDefine->models[p]->degreeStart = modelFinder->m_modelDefine[p].degreeStart;
+		modelDefine->models[p]->degreeEnd = modelFinder->m_modelDefine[p].degreeEnd;
+		modelDefine->models[p]->rotationResolution = modelFinder->m_modelDefine[p].rotationResolution;
+		modelDefine->models[p]->SobelLow = modelFinder->m_modelDefine[p].SobelLow;
+		modelDefine->models[p]->SobelHigh = modelFinder->m_modelDefine[p].SobelHigh;
 
-	modelDefine->centerOfGravityX = modelFinder->m_modelDefine.centerOfGravity.x;
-	modelDefine->centerOfGravityY = modelFinder->m_modelDefine.centerOfGravity.y;
+		modelDefine->models[p]->centerOfGravityX = modelFinder->m_modelDefine[p].centerOfGravity.x;
+		modelDefine->models[p]->centerOfGravityY = modelFinder->m_modelDefine[p].centerOfGravity.y;
 
-	modelDefine->cordinatesX = gcnew array<int>(modelDefine->modelWidth*modelDefine->modelHeight);
-	modelDefine->cordinatesY = gcnew array<int>(modelDefine->modelWidth*modelDefine->modelHeight);
-	modelDefine->edgeMagnitude = gcnew array<double>(modelDefine->modelWidth*modelDefine->modelHeight);
-	modelDefine->edgeDerivativeX = gcnew array<double>(modelDefine->modelWidth*modelDefine->modelHeight);
-	modelDefine->edgeDerivativeY = gcnew array<double>(modelDefine->modelWidth*modelDefine->modelHeight);
+		modelDefine->models[p]->cordinatesX = gcnew array<int>(modelDefine->models[p]->modelWidth * modelDefine->models[p]->modelHeight);
+		modelDefine->models[p]->cordinatesY = gcnew array<int>(modelDefine->models[p]->modelWidth * modelDefine->models[p]->modelHeight);
+		modelDefine->models[p]->edgeMagnitude = gcnew array<double>(modelDefine->models[p]->modelWidth * modelDefine->models[p]->modelHeight);
+		modelDefine->models[p]->edgeDerivativeX = gcnew array<double>(modelDefine->models[p]->modelWidth * modelDefine->models[p]->modelHeight);
+		modelDefine->models[p]->edgeDerivativeY = gcnew array<double>(modelDefine->models[p]->modelWidth * modelDefine->models[p]->modelHeight);
 
-	for (int i = 0; i < modelDefine->noOfCordinates; i++)
-	{
-		modelDefine->cordinatesX[i] = modelFinder->m_modelDefine.cordinates[i].x;
-		modelDefine->cordinatesY[i] = modelFinder->m_modelDefine.cordinates[i].y;
-		modelDefine->edgeMagnitude[i] = modelFinder->m_modelDefine.edgeMagnitude[i];
-		modelDefine->edgeDerivativeX[i] = modelFinder->m_modelDefine.edgeDerivativeX[i];
-		modelDefine->edgeDerivativeY[i] = modelFinder->m_modelDefine.edgeDerivativeY[i];
-	}*/
-
+		for (int i = 0; i < modelDefine->models[p]->noOfCordinates; i++)
+		{
+			modelDefine->models[p]->cordinatesX[i] = modelFinder->m_modelDefine[p].cordinates[i].x;
+			modelDefine->models[p]->cordinatesY[i] = modelFinder->m_modelDefine[p].cordinates[i].y;
+			modelDefine->models[p]->edgeMagnitude[i] = modelFinder->m_modelDefine[p].edgeMagnitude[i];
+			modelDefine->models[p]->edgeDerivativeX[i] = modelFinder->m_modelDefine[p].edgeDerivativeX[i];
+			modelDefine->models[p]->edgeDerivativeY[i] = modelFinder->m_modelDefine[p].edgeDerivativeY[i];
+		}
+	}
 	SerializeProject::SaveSerialize(modelDefine, filename);
 }
 
 void ModelFinder::DeSerializeModel(System::String^ filename)
 {
-	modelDefine = SerializeProject::LoadDeserialize(filename);
+	try {
+		std::cout << "Start DeSerialize..";
+		modelDefine = SerializeProject::LoadDeserialize(filename);
+		int size = modelFinder->PrymidSize;
+		for (int p = 0; p < size; p++) {
+			
+			modelFinder->m_modelDefine[p].searshScore = modelDefine->models[p]->searshScore;
+			modelFinder->m_modelDefine[p].noOfCordinates = modelDefine->models[p]->noOfCordinates;
+			modelFinder->m_modelDefine[p].modelHeight = modelDefine->models[p]->modelHeight;
+			modelFinder->m_modelDefine[p].modelWidth = modelDefine->models[p]->modelWidth;
+			modelFinder->m_modelDefine[p].totalDegree = modelDefine->models[p]->totalDegree;
+			modelFinder->m_modelDefine[p].modelDefined = modelDefine->models[p]->modelDefined;
+			modelFinder->m_modelDefine[p].degreeStart = modelDefine->models[p]->degreeStart;
+			modelFinder->m_modelDefine[p].degreeEnd = modelDefine->models[p]->degreeEnd;
+			modelFinder->m_modelDefine[p].rotationResolution = modelDefine->models[p]->rotationResolution;
+			modelFinder->m_modelDefine[p].SobelLow = modelDefine->models[p]->SobelLow;
+			modelFinder->m_modelDefine[p].SobelHigh = modelDefine->models[p]->SobelHigh;
 
-	/*modelFinder->m_modelDefine.searshScore = modelDefine->searshScore;
-	modelFinder->m_modelDefine.noOfCordinates = modelDefine->noOfCordinates;
-	modelFinder->m_modelDefine.modelHeight = modelDefine->modelHeight;
-	modelFinder->m_modelDefine.modelWidth = modelDefine->modelWidth;
-	modelFinder->m_modelDefine.totalDegree = modelDefine->totalDegree;
-	modelFinder->m_modelDefine.modelDefined = modelDefine->modelDefined;
-	modelFinder->m_modelDefine.degreeStart = modelDefine->degreeStart;
-	modelFinder->m_modelDefine.degreeEnd = modelDefine->degreeEnd;
-	modelFinder->m_modelDefine.rotationResolution = modelDefine->rotationResolution;
-	modelFinder->m_modelDefine.SobelLow = modelDefine->SobelLow;
-	modelFinder->m_modelDefine.SobelHigh = modelDefine->SobelHigh;
+			modelFinder->m_modelDefine[p].centerOfGravity.x = modelDefine->models[p]->centerOfGravityX;
+			modelFinder->m_modelDefine[p].centerOfGravity.y = modelDefine->models[p]->centerOfGravityY;
 
-	modelFinder->m_modelDefine.centerOfGravity.x = modelDefine->centerOfGravityX;
-	modelFinder->m_modelDefine.centerOfGravity.y = modelDefine->centerOfGravityY;
+			modelFinder->m_modelDefine[p].Release();
 
-	modelFinder->m_modelDefine.Release();
+			modelFinder->m_modelDefine[p].cordinates = new CvPoint[modelDefine->models[p]->modelWidth * modelDefine->models[p]->modelHeight];
+			modelFinder->m_modelDefine[p].edgeMagnitude = new double[modelDefine->models[p]->modelWidth * modelDefine->models[p]->modelHeight];
+			modelFinder->m_modelDefine[p].edgeDerivativeX = new double[modelDefine->models[p]->modelWidth * modelDefine->models[p]->modelHeight];
+			modelFinder->m_modelDefine[p].edgeDerivativeY = new double[modelDefine->models[p]->modelWidth * modelDefine->models[p]->modelHeight];
 
-	modelFinder->m_modelDefine.cordinates = new CvPoint[modelDefine->modelWidth*modelDefine->modelHeight];
-	modelFinder->m_modelDefine.edgeMagnitude = new double[modelDefine->modelWidth*modelDefine->modelHeight];
-	modelFinder->m_modelDefine.edgeDerivativeX = new double[modelDefine->modelWidth*modelDefine->modelHeight];
-	modelFinder->m_modelDefine.edgeDerivativeY = new double[modelDefine->modelWidth*modelDefine->modelHeight];
+			for (int i = 0; i < modelDefine->models[p]->noOfCordinates; i++)
+			{
+				modelFinder->m_modelDefine[p].cordinates[i].x = modelDefine->models[p]->cordinatesX[i];
+				modelFinder->m_modelDefine[p].cordinates[i].y = modelDefine->models[p]->cordinatesY[i];
+				modelFinder->m_modelDefine[p].edgeMagnitude[i] = modelDefine->models[p]->edgeMagnitude[i];
+				modelFinder->m_modelDefine[p].edgeDerivativeX[i] = modelDefine->models[p]->edgeDerivativeX[i];
+				modelFinder->m_modelDefine[p].edgeDerivativeY[i] = modelDefine->models[p]->edgeDerivativeY[i];
 
-	for (int i = 0; i < modelDefine->noOfCordinates; i++)
+
+			}
+			modelFinder->CreateRotateModel(modelFinder->m_modelDefine[p]);
+		}
+	}
+	catch (IOException^ ex)
 	{
-		modelFinder->m_modelDefine.cordinates[i].x = modelDefine->cordinatesX[i];
-		modelFinder->m_modelDefine.cordinates[i].y = modelDefine->cordinatesY[i];
-		modelFinder->m_modelDefine.edgeMagnitude[i]=modelDefine->edgeMagnitude[i];
-		modelFinder->m_modelDefine.edgeDerivativeX[i] = modelDefine->edgeDerivativeX[i];
-		modelFinder->m_modelDefine.edgeDerivativeY[i] = modelDefine->edgeDerivativeY[i];
-	}*/
-
-	modelFinder->CreateRotateModel();
+		throw ex;
 	
-
+	}
 }

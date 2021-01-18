@@ -37,6 +37,8 @@ namespace Cpp {
 
 		void Release();
 		void ReleaseMatrix();
+
+		Mat eraserMask;
 	
 	};
 

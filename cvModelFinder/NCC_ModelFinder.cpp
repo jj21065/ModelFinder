@@ -70,32 +70,38 @@ void NCC_ModelFinder::CreatModel(cv::Mat mat)
 		cvCopy(templateimage, grayTemplateImg);
 	}
 	IplImage* dst = 0;          //目標影像指標
-	/*if (!CreateGeoMatchModel(grayTemplateImg, m_modelDefine[0], lowThreshold, highThreashold))
-	{
-		cout << "ERROR: could not create model...";
-		return;
-	}*/
+
+	CvSize dst_cvsize;          //目標影像尺寸
+	
+	cout << " Shape model created.." << "with  Low Threshold = " << lowThreshold << " High Threshold = " << highThreashold << endl;
+	
 	for (int i = 0; i < PrymidSize; i++) {
-
-
-		CvSize dst_cvsize;          //目標影像尺寸
+		cout << "Pyramid " << i << endl;
+		//CreatePyramidModel(i, m_modelDefine[0], m_modelDefine[i]);
 		dst = 0;          //目標影像指標
-		dst_cvsize.width = grayTemplateImg->width / pow(2,i);       //目標影像的寬為源影像寬的scale倍
+		dst_cvsize.width = grayTemplateImg->width/pow(2,i);       //目標影像的寬為源影像寬的scale倍
 		dst_cvsize.height = grayTemplateImg->height / pow(2, i); //
 		dst = cvCreateImage(dst_cvsize, grayTemplateImg->depth, grayTemplateImg->nChannels);
 		cvResize(grayTemplateImg, dst, CV_INTER_LINEAR);    //
-		/*cvNamedWindow("Template dst", CV_WINDOW_AUTOSIZE);
-		cvShowImage("Template dst", dst);*/
+
+		cout << "Pyramid imageDone " << i << "Done" << endl;
 		if (!CreateGeoMatchModel(dst, m_modelDefine[i], lowThreshold, highThreashold))
 		{
 			cout << "ERROR: could not create model...";
 			return;
 		}
-	
-		cout << " Shape model created.." << "with  Low Threshold = " << lowThreshold << " High Threshold = " << highThreashold << endl;
 
-
+		cout << "Pyramid " << i << "Done" <<endl;
+		/*DrawContours(dst,m_modelDefine[i], CV_RGB(0, 255, 5), 1);
+		string str = to_string(i);
+		cvNamedWindow(str.c_str(), CV_WINDOW_AUTOSIZE);
+		cvShowImage(str.c_str(), dst);
+	*/
+		cvReleaseImage(&dst);
 	}
+
+
+
 	//DrawContours(templateimage, m_modelDefine[0], CV_RGB(255, 0, 0), 1);
 	//Display result
 	if (showCvImage) {
@@ -118,6 +124,9 @@ void NCC_ModelFinder::ModelEraser(int x, int y, int eraserWidth)
 		if (m_modelDefine[prymidIdx].modelDefined)
 		{
 			try {
+				x = x / pow(2, prymidIdx);
+				y = y / pow(2, prymidIdx);
+				eraserWidth = eraserWidth / pow(2, prymidIdx);
 				int i = 0;
 				int no = 0;
 				int size = m_modelDefine[prymidIdx].noOfCordinates;
@@ -138,17 +147,17 @@ void NCC_ModelFinder::ModelEraser(int x, int y, int eraserWidth)
 				for (i = 0; i < size; i++)
 				{
 
-					if (abs(m_modelDefine[prymidIdx].cordinates[i].x + m_modelDefine[prymidIdx].centerOfGravity.x - x) < eraserWidth && abs(m_modelDefine[prymidIdx].cordinates[i].y + m_modelDefine[prymidIdx].centerOfGravity.y - y) < eraserWidth) {
+					if (abs(m_modelDefine[prymidIdx].cordinates[i].x + m_modelDefine[prymidIdx].centerOfGravity.x - x) <= eraserWidth && abs(m_modelDefine[prymidIdx].cordinates[i].y + m_modelDefine[prymidIdx].centerOfGravity.y - y) <= eraserWidth) {
 
 					}
 					else
 					{
 
-						xx[no] = m_modelDefine[0].cordinates[i].x;
-						yy[no] = m_modelDefine[0].cordinates[i].y;
-						ex[no] = m_modelDefine[0].edgeDerivativeX[i];
-						ey[no] = m_modelDefine[0].edgeDerivativeY[i];
-						m[no] = m_modelDefine[0].edgeMagnitude[i];
+						xx[no] = m_modelDefine[prymidIdx].cordinates[i].x;
+						yy[no] = m_modelDefine[prymidIdx].cordinates[i].y;
+						ex[no] = m_modelDefine[prymidIdx].edgeDerivativeX[i];
+						ey[no] = m_modelDefine[prymidIdx].edgeDerivativeY[i];
+						m[no] = m_modelDefine[prymidIdx].edgeMagnitude[i];
 						++no;
 					}
 
@@ -165,19 +174,25 @@ void NCC_ModelFinder::ModelEraser(int x, int y, int eraserWidth)
 				}
 				m_modelDefine[prymidIdx].noOfCordinates = no;
 				std::cout << "no = " << no << std::endl;
-				//std::cout << '\n';
-				//m_modelDefine.Release();
-
-				//m_modelDefine.cordinates = new CvPoint[m_modelDefine.modelWidth * m_modelDefine.modelHeight];		//Allocate memory for coorinates of selected points in template image
-				//m_modelDefine.edgeMagnitude = new double[m_modelDefine.modelWidth * m_modelDefine.modelHeight];		//Allocate memory for edge magnitude for selected points
-				//m_modelDefine.edgeDerivativeX = new double[m_modelDefine.modelWidth * m_modelDefine.modelHeight];			//Allocate memory for edge X derivative for selected points
-				//m_modelDefine.edgeDerivativeY = new double[m_modelDefine.modelWidth * m_modelDefine.modelHeight];			////Allocate memory for edge Y derivative for selected points
+		
 				delete[] xx;
 				delete[] yy;
 				delete[] ex;
 				delete[] ey;
 				delete[] m;
-
+				if (showCvImage) {
+					CvSize dst_cvsize;          //目標影像尺寸
+					IplImage* dst = 0;
+					dst_cvsize.width = m_modelDefine[prymidIdx].modelWidth;       //目標影像的寬為源影像寬的scale倍
+					dst_cvsize.height = m_modelDefine[prymidIdx].modelHeight; //
+					dst = cvCreateImage(dst_cvsize, IPL_DEPTH_8U, 3);
+					cvZero(dst);
+					DrawContours(dst, m_modelDefine[prymidIdx], CV_RGB(0, 255, 5), 1);
+					string str = to_string(prymidIdx);
+					cvNamedWindow(str.c_str(), CV_WINDOW_AUTOSIZE);
+					cvShowImage(str.c_str(), dst);
+					cvReleaseImage(&dst);
+				}
 
 				//std::set<int>::iterator iterx = xx.begin();
 				//std::set<int>::iterator itery = yy.begin();
@@ -195,7 +210,7 @@ void NCC_ModelFinder::ModelEraser(int x, int y, int eraserWidth)
 				//		m_modelDefine.edgeMagnitude[i] = (*itermag);
 				//	}
 				//}
-				CreateRotateModel();
+				CreateRotateModel(m_modelDefine[prymidIdx]);
 			}
 
 			catch (std::exception & ex)
@@ -205,6 +220,11 @@ void NCC_ModelFinder::ModelEraser(int x, int y, int eraserWidth)
 			}
 		}
 	}
+}
+
+void NCC_ModelFinder::ModelEraserMask(int x, int y, int eraserWidth)
+{
+
 }
 
 void NCC_ModelFinder::CreateRotateModel()
@@ -247,7 +267,7 @@ void NCC_ModelFinder::CreateRotateModel(Cpp::ModelDefine& model)
 	float r2 = model.degreeEnd;
 	float l = sqrt(model.modelWidth * model.modelWidth + model.modelHeight * model.modelHeight);
 	float resolution = acos(1 - 2 / (l * l));
-	 model.rotationResolution = resolution;
+	model.rotationResolution = resolution;
 	model.totalDegree = (r2 - r1) / model.rotationResolution + 1;
 	int count = 0;
 	model.cordinatesRotate = new CvPoint * [model.totalDegree];		//Coordinates array to store model points	
@@ -259,11 +279,12 @@ void NCC_ModelFinder::CreateRotateModel(Cpp::ModelDefine& model)
 		model.edgeDerivativeXRotate[i] = new double[model.noOfCordinates];
 		model.edgeDerivativeYRotate[i] = new double[model.noOfCordinates];
 	}
-	for (float degree = r1; degree < r2; degree += resolution)
+	for (int degree = 0; degree < model.totalDegree - 1; degree++)
 	{
 		for (int i = 0; i < model.noOfCordinates; i++)
 		{
-			float thida = degree * CV_PI / 180.0;
+			//float thida = degree * CV_PI / 180.0;
+			float thida = (r1 + count * resolution) * CV_PI / 180.0;
 			model.cordinatesRotate[count][i].x = (model.cordinates[i].x) * cos(thida) - (model.cordinates[i].y) * sin(thida);
 			model.cordinatesRotate[count][i].y = (model.cordinates[i].x) * sin(thida) + (model.cordinates[i].y) * cos(thida);
 			model.edgeDerivativeXRotate[count][i] = model.edgeDerivativeX[i] * cos(thida) - model.edgeDerivativeY[i] * sin(thida);
@@ -275,27 +296,12 @@ void NCC_ModelFinder::CreateRotateModel(Cpp::ModelDefine& model)
 	model.modelDefined = true;
 }
 
-void CreatePrymid(int prymidIndex,Cpp::ModelDefine& sourceModel, Cpp::ModelDefine& model)
-{
-	model.modelWidth = sourceModel.modelWidth / pow(2, prymidIndex);
-	model.modelHeight = sourceModel.modelHeight / pow(2, prymidIndex);
 
-	model.cordinates = new CvPoint[model.modelWidth * model.modelHeight];		//Allocate memory for coorinates of selected points in template image
-	model.edgeMagnitude = new double[model.modelWidth * model.modelHeight];		//Allocate memory for edge magnitude for selected points
-	model.edgeDerivativeX = new double[model.modelWidth * model.modelHeight];			//Allocate memory for edge X derivative for selected points
-	model.edgeDerivativeY = new double[model.modelWidth * model.modelHeight];			////Allocate memory for edge Y derivative for selected points
-
-	float l = sqrt(model.modelWidth * model.modelWidth + model.modelHeight * model.modelHeight);
-	float resolution = acos(1 - 2 / (l * l));
-	double r1 = model.degreeStart;
-	double r2 = model.degreeEnd;
-
-}
 void NCC_ModelFinder::ModelFind(cv::Mat mat)
 {
 
-	int lowThreshold = 100;		//deafult value
-	int highThreashold = 150;	//deafult value
+	int lowThreshold = m_modelDefine[0].SobelLow;		//deafult value
+	int highThreashold = m_modelDefine[0].SobelHigh;	//deafult value
 
 	double minScore = m_modelDefine[0].searshScore;		//deafult value
 	double greediness = 0.9;		//deafult value
@@ -350,7 +356,7 @@ void NCC_ModelFinder::ModelFind(cv::Mat mat)
 	int rotateStart = 0;
 	double tempX = 0;
 	double tempY = 0;
-	
+
 	int sizeOfPrymid = PrymidSize;
 	if (roi.isEnable)
 	{
@@ -361,8 +367,8 @@ void NCC_ModelFinder::ModelFind(cv::Mat mat)
 		double tempYEnd = 0;
 
 
-		for (int prymidIdx = sizeOfPrymid-1; prymidIdx >= 0; prymidIdx--) {
-			
+		for (int prymidIdx = sizeOfPrymid - 1; prymidIdx >= 0; prymidIdx--) {
+
 			SearchROI tmproi = SearchROI();
 			tmproi.isEnable = true;
 			tmproi.rect.x = roi.rect.x / pow(2, prymidIdx);
@@ -375,8 +381,8 @@ void NCC_ModelFinder::ModelFind(cv::Mat mat)
 			dst_cvsize.width = graySearchImg->width / pow(2, prymidIdx);       //目標影像的寬為源影像寬的scale倍
 			dst_cvsize.height = graySearchImg->height / pow(2, prymidIdx); //
 			dst = cvCreateImage(dst_cvsize, graySearchImg->depth, graySearchImg->nChannels);
-			
-			if (prymidIdx == sizeOfPrymid-1) {
+
+			if (prymidIdx == sizeOfPrymid - 1) {
 				rotateEnd = (int)(abs(m_modelDefine[prymidIdx].degreeEnd - (m_modelDefine[prymidIdx].degreeStart)) / (m_modelDefine[prymidIdx].rotationResolution));
 				tempXEnd = tmproi.rect.height;
 				tempYEnd = tmproi.rect.width;
@@ -388,9 +394,9 @@ void NCC_ModelFinder::ModelFind(cv::Mat mat)
 			cvSetImageROI(dst, tmproi.rect);
 			cvNamedWindow("Search roi dst", CV_WINDOW_AUTOSIZE);
 			cvShowImage("Search roi dst", dst);
-			
-			
-			score = FindGeoMatchModelRotateParallelSSE(dst, m_modelDefine[prymidIdx], tmproi, tempX, tempY,tempXEnd,tempYEnd, rotateStart, rotateEnd, minScore, greediness, rotation);
+
+			cout << "total degree " << m_modelDefine[prymidIdx].totalDegree << endl;;
+			score = FindGeoMatchModelRotateParallelSSE(dst, m_modelDefine[prymidIdx], tmproi, tempX, tempY, tempXEnd, tempYEnd, rotateStart, rotateEnd, minScore, greediness, rotation);
 			if (score > minScore)
 			{
 				clock_t finish_time1 = clock();
@@ -416,25 +422,29 @@ void NCC_ModelFinder::ModelFind(cv::Mat mat)
 
 				}
 				if (prymidIdx > 0) {
-					int RangeStart = rotation - m_modelDefine[prymidIdx].totalDegree/15;
-					int RangeEnd = rotation + m_modelDefine[prymidIdx].totalDegree / 15;
-					
+				
+					int RangeStart = rotation - m_modelDefine[prymidIdx].totalDegree / 100;
+					RangeStart = (RangeStart < 0) ? 0 : RangeStart;
+						
+					int RangeEnd = rotation + m_modelDefine[prymidIdx].totalDegree / 100;
+					RangeEnd = (RangeEnd > m_modelDefine[prymidIdx].totalDegree-1) ? m_modelDefine[prymidIdx].totalDegree-1 : RangeEnd;
+
 					rotateStart = (int)(m_modelDefine[prymidIdx].rotationResolution * (RangeStart) / m_modelDefine[prymidIdx - 1].rotationResolution);
 					rotateEnd = (int)(m_modelDefine[prymidIdx].rotationResolution * (RangeEnd) / m_modelDefine[prymidIdx - 1].rotationResolution);
-					
-					
-					tempY = (result.location.x-tmproi.rect.y) * 2 - tmproi.rect.height/4;
-					tempX = (result.location.y - tmproi.rect.x) * 2 - tmproi.rect.width/4;
-					tempYEnd = tempY + tmproi.rect.height/2;
-					tempXEnd = tempX + tmproi.rect.width/2;
+
+
+					tempY = (result.location.x - tmproi.rect.y) * 2 - tmproi.rect.height / 4;
+					tempX = (result.location.y - tmproi.rect.x) * 2 - tmproi.rect.width / 4;
+					tempYEnd = tempY + tmproi.rect.height / 2;
+					tempXEnd = tempX + tmproi.rect.width / 2;
 				}
-				cout << "Next start at " << tempY << endl;
-				cout << "Next start at " << tempX << endl;
+			
 			}
 			else
 			{
 				break;
 			}
+			cvReleaseImage(&dst);
 		}
 	}
 	else
@@ -490,7 +500,7 @@ int NCC_ModelFinder::CreateGeoMatchModel(const void* templateArr, Cpp::ModelDefi
 		model.Release();
 	//double resolution = model.rotationResolution;
 
-
+	
 	CvMat* gx = 0;		//Matrix to store X derivative
 	CvMat* gy = 0;		//Matrix to store Y derivative
 	CvMat* nmsEdges = 0;		//Matrix to store temp restult
@@ -611,7 +621,7 @@ int NCC_ModelFinder::CreateGeoMatchModel(const void* templateArr, Cpp::ModelDefi
 		}
 	}
 
-
+	
 	int RSum = 0, CSum = 0;
 	int curX, curY;
 	int flag = 1;
@@ -619,7 +629,7 @@ int NCC_ModelFinder::CreateGeoMatchModel(const void* templateArr, Cpp::ModelDefi
 	//Hysterisis threshold
 	for (i = 1; i < Ssize.height - 1; i++)
 	{
-		for (j = 1; j < Ssize.width -1 ; j++)
+		for (j = 1; j < Ssize.width - 1; j++)
 		{
 			_sdx = (short*)(gx->data.ptr + gx->step * i);
 			_sdy = (short*)(gy->data.ptr + gy->step * i);
@@ -683,10 +693,8 @@ int NCC_ModelFinder::CreateGeoMatchModel(const void* templateArr, Cpp::ModelDefi
 			}
 		}
 	}
-
 	model.centerOfGravity.x = RSum / model.noOfCordinates; // center of gravity
 	model.centerOfGravity.y = CSum / model.noOfCordinates;	// center of gravity
-
 	// change coordinates to reflect center of gravity
 	for (int m = 0; m < model.noOfCordinates; m++)
 	{
@@ -709,11 +717,12 @@ int NCC_ModelFinder::CreateGeoMatchModel(const void* templateArr, Cpp::ModelDefi
 		model.edgeDerivativeXRotate[i] = new double[model.noOfCordinates];
 		model.edgeDerivativeYRotate[i] = new double[model.noOfCordinates];
 	}
-	for (float degree = r1; degree < r2; degree += resolution)
+	for (int degree = 0; degree < model.totalDegree-1; degree ++)
 	{
 		for (int i = 0; i < model.noOfCordinates; i++)
 		{
-			float thida = degree * CV_PI / 180.0;
+			//float thida = degree * CV_PI / 180.0;
+			float thida = (r1 + count * resolution) * CV_PI / 180.0;
 			model.cordinatesRotate[count][i].x = (model.cordinates[i].x) * cos(thida) - (model.cordinates[i].y) * sin(thida);
 			model.cordinatesRotate[count][i].y = (model.cordinates[i].x) * sin(thida) + (model.cordinates[i].y) * cos(thida);
 			model.edgeDerivativeXRotate[count][i] = model.edgeDerivativeX[i] * cos(thida) - model.edgeDerivativeY[i] * sin(thida);
@@ -721,9 +730,9 @@ int NCC_ModelFinder::CreateGeoMatchModel(const void* templateArr, Cpp::ModelDefi
 
 		}
 		count++;
+	
 	}
 	////cvSaveImage("Edges.bmp",imgGDir);
-
 	// free alocated memories
 	delete[] orients;
 	////cvReleaseImage(&imgGDir);
@@ -732,15 +741,14 @@ int NCC_ModelFinder::CreateGeoMatchModel(const void* templateArr, Cpp::ModelDefi
 	cvReleaseMat(&nmsEdges);
 
 	ReleaseDoubleMatrix(magMat, Ssize.height);
-
 	model.modelDefined = true;
 	return 1;
 }
 
 double NCC_ModelFinder::FindGeoMatchModelRotateParallelSSE(const void* srcarr, Cpp::ModelDefine& model, SearchROI tmpRoi, int x, int y, int xend, int yend, int rotateStart, int rotateEnd, double minScore, double greediness, double& rotation)
 {
-	CvMat* Sdx = 0, * Sdy = 0;
-
+	//CvMat* Sdx = 0, * Sdy = 0;
+	CvMat** Sd = new CvMat * [2];
 	int i, j;			// count variables
 
 	double** matGradMag;  //Gradient magnitude matrix
@@ -768,12 +776,27 @@ double NCC_ModelFinder::FindGeoMatchModelRotateParallelSSE(const void* srcarr, C
 
 	CreateDoubleMatrix(matGradMag, Ssize); // create image to save gradient magnitude  values
 
-	Sdx = cvCreateMat(Ssize.height, Ssize.width, CV_16SC1); // X derivatives
-	Sdy = cvCreateMat(Ssize.height, Ssize.width, CV_16SC1); // y derivatives
+	//Sdx = cvCreateMat(Ssize.height, Ssize.width, CV_16SC1); // X derivatives
+	//Sdy = cvCreateMat(Ssize.height, Ssize.width, CV_16SC1); // y derivatives
 
-	cvSobel(src, Sdx, 1, 0, 3);  // find X derivatives
-	cvSobel(src, Sdy, 0, 1, 3); // find Y derivatives
+	//cvSobel(src, Sdx, 1, 0, 3);  // find X derivatives
+	//cvSobel(src, Sdy, 0, 1, 3); // find Y derivatives
 
+#pragma omp parallel for
+	for (i = 0; i < 2; i++) {
+		Sd[i] = cvCreateMat(Ssize.height, Ssize.width, CV_16SC1);
+		if (i == 0)
+		{
+			cvSobel(src, Sd[i], 1, 0, 3);  // find X derivatives
+		}
+		else
+		{
+			cvSobel(src, Sd[i], 0, 1, 3); // find Y derivatives
+
+		}
+	}
+
+#pragma omp barrier
 	// stoping criterias to search for model
 	double normMinScore = minScore / model.noOfCordinates; // precompute minumum score 
 	double normGreediness = ((1 - greediness * minScore) / (1 - greediness)) / model.noOfCordinates; // precompute greedniness 
@@ -786,8 +809,8 @@ double NCC_ModelFinder::FindGeoMatchModelRotateParallelSSE(const void* srcarr, C
 		const short* _Sdy;
 		//double iSx, iSy;
 
-		_Sdx = (short*)(Sdx->data.ptr + Sdx->step * (i));
-		_Sdy = (short*)(Sdy->data.ptr + Sdy->step * (i));
+		_Sdx = (short*)(Sd[0]->data.ptr + Sd[0]->step * (i));
+		_Sdy = (short*)(Sd[1]->data.ptr + Sd[1]->step * (i));
 
 		//	parallel_for(size_t(0), size_t(Ssize.width), [&](size_t j)
 #pragma omp parallel for
@@ -808,13 +831,14 @@ double NCC_ModelFinder::FindGeoMatchModelRotateParallelSSE(const void* srcarr, C
 	}
 	/*int height = Ssize.height;
 	int width = Ssize.width;*/
+
 	int height = xend;
 	int width = yend;
 	int degreeStart = rotateStart;
 	int degreeEnd = model.totalDegree;
 	/*int degreeStart = 0;
 	int degreeEnd = model.totalDegree;*/
-	cout << "iterateion X = " << (height - x) <<" Y ="<< (width - y) << " R ="<< (degreeEnd - degreeStart);
+	cout << "iterateion X = " << (height - x) << " Y =" << (width - y) << " R =" << (degreeEnd - degreeStart);
 #pragma omp parallel for
 	for (i = x; i < height; i++)
 	{
@@ -857,8 +881,8 @@ double NCC_ModelFinder::FindGeoMatchModelRotateParallelSSE(const void* srcarr, C
 					if (curX<0 || curY<0 || curX>Ssize.height - 1 || curY>Ssize.width - 1)
 						continue;
 
-					_Sdx = (short*)(Sdx->data.ptr + Sdx->step * (curX));
-					_Sdy = (short*)(Sdy->data.ptr + Sdy->step * (curX));
+					_Sdx = (short*)(Sd[0]->data.ptr + Sd[0]->step * (curX));
+					_Sdy = (short*)(Sd[1]->data.ptr + Sd[1]->step * (curX));
 
 					iSx = _Sdx[curY]; // get curresponding  X derivative from source image
 					iSy = _Sdy[curY];// get curresponding  Y derivative from source image
@@ -920,17 +944,14 @@ double NCC_ModelFinder::FindGeoMatchModelRotateParallelSSE(const void* srcarr, C
 
 	// free used resources and return score
 	ReleaseDoubleMatrix(matGradMag, Ssize.height);
-	cvReleaseMat(&Sdx);
-	cvReleaseMat(&Sdy);
+	cvReleaseMat(&Sd[0]);
+	cvReleaseMat(&Sd[1]);
+	delete []Sd;
 	delete[] tmpPoint;
 	delete[]  resultScore;
 	return score;
 }
 
-void NCC_ModelFinder::PyramidTestFlow(cv::Mat templateImage, cv::Mat srcImage)
-{
-
-}
 
 // destructor
 NCC_ModelFinder::~NCC_ModelFinder(void)
@@ -950,6 +971,7 @@ void NCC_ModelFinder::ReleaseDoubleMatrix(double**& matrix, int size)
 {
 	for (int iInd = 0; iInd < size; iInd++)
 		delete[] matrix[iInd];
+	delete[] matrix;
 }
 
 
@@ -992,7 +1014,7 @@ void NCC_ModelFinder::DrawContours(IplImage* source, CvScalar color, int lineWid
 	}
 }
 
-void NCC_ModelFinder::DrawContours(IplImage* source, ModelDefine model, CvScalar color, int lineWidth)
+void NCC_ModelFinder::DrawContours(IplImage* source, ModelDefine& model, CvScalar color, int lineWidth)
 {
 	CvPoint point;
 	for (int i = 0; i < model.noOfCordinates; i++)

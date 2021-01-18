@@ -25,7 +25,7 @@ namespace CLI {
 	};
 
 	[Serializable]
-	public ref class ModelDefineDotNet
+	public ref class ModelDefinePyramidDotNet
 	{
 	public:
 		double searshScore;
@@ -52,6 +52,13 @@ namespace CLI {
 		int SobelHigh = 100;
 	};
 
+	[Serializable]
+	public ref class ModelDefinDotNet
+	{
+	public:
+		array<ModelDefinePyramidDotNet^>^ models;
+	};
+
 	public class SerializeProject
 	{
 
@@ -71,16 +78,16 @@ namespace CLI {
 			return filepath;
 		}
 
-		static ModelDefineDotNet^ LoadDeserialize(System::String^ s)
+		static ModelDefinDotNet^ LoadDeserialize(System::String^ s)
 		{
-			ModelDefineDotNet^ o;
+			ModelDefinDotNet^ o;
 			//try
 			//{
 
 			FileStream^ myFileStream = gcnew FileStream(s, FileMode::Open, FileAccess::Read);
 			BinaryFormatter^ myBFormatter = gcnew BinaryFormatter();
 			//Console.WriteLine("開始還原序列化物件…….");
-			o = (ModelDefineDotNet^)myBFormatter->Deserialize(myFileStream);
+			o = (ModelDefinDotNet^)myBFormatter->Deserialize(myFileStream);
 			//Console.WriteLine("物件完成還原…….");
 			myFileStream->Close();
 			//}
@@ -105,7 +112,7 @@ namespace CLI {
 		Cpp::NCC_ModelFinder* modelFinder = nullptr;
 		SearchResult^ searchResult;
 		SearchROI^ roi;
-		ModelDefineDotNet^ modelDefine;
+		ModelDefinDotNet^ modelDefine;
 		ModelFinder();
 		~ModelFinder();
 		void SetROI(SearchROI ^_roi)
