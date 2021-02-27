@@ -32,6 +32,7 @@ namespace Cpp {
 
 		int SobelLow = 100;
 		int SobelHigh = 100;
+		int PyramidIdx = 0;
 		ModelDefine();
 		~ModelDefine();
 

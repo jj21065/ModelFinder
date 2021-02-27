@@ -30,7 +30,7 @@ namespace ModelFinderTestWPF
             Bitmap image = new Bitmap(@".\\template1.jpg");
             if (image != null)
             {
-                modelFinder.SetModelPara(-5, 5, 0.1, 0.6);
+                modelFinder.SetModelPara(-3, 3, 0.1, 0.9);
                 modelFinder.SetROI(1100, 850, 400, 400);
                 modelFinder.SetSobelThreshold(120, 130);
                 modelFinder.showCvImage = true;

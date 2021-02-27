@@ -85,6 +85,9 @@ void NCC_ModelFinder::CreatModel(cv::Mat mat)
 		cvResize(grayTemplateImg, dst, CV_INTER_LINEAR);    //
 
 		cout << "Pyramid imageDone " << i << "Done" << endl;
+		if (i > 0)
+			m_modelDefine[i].searshScore = m_modelDefine[i-1].searshScore*0.8;
+		m_modelDefine[i].PyramidIdx = i;
 		if (!CreateGeoMatchModel(dst, m_modelDefine[i], lowThreshold, highThreashold))
 		{
 			cout << "ERROR: could not create model...";
@@ -397,7 +400,7 @@ void NCC_ModelFinder::ModelFind(cv::Mat mat)
 
 			cout << "total degree " << m_modelDefine[prymidIdx].totalDegree << endl;;
 			score = FindGeoMatchModelRotateParallelSSE(dst, m_modelDefine[prymidIdx], tmproi, tempX, tempY, tempXEnd, tempYEnd, rotateStart, rotateEnd, minScore, greediness, rotation);
-			if (score > minScore)
+			//if (score > minScore)
 			{
 				clock_t finish_time1 = clock();
 				total_time = (double)(finish_time1 - start_time1) / CLOCKS_PER_SEC;
@@ -440,10 +443,10 @@ void NCC_ModelFinder::ModelFind(cv::Mat mat)
 				}
 			
 			}
-			else
+			/*else
 			{
 				break;
-			}
+			}*/
 			cvReleaseImage(&dst);
 		}
 	}
@@ -853,8 +856,8 @@ double NCC_ModelFinder::FindGeoMatchModelRotateParallelSSE(const void* srcarr, C
 #pragma omp parallel for
 			for (int degree = degreeStart; degree < degreeEnd; degree++)
 			{
-				if (isFound)
-					continue;
+				/*if (isFound)
+					continue;*/
 				double sumOfCoords = 0;
 				double partialScore = 0;
 				double partialSum = 0; // initilize partialSum measure
@@ -864,6 +867,10 @@ double NCC_ModelFinder::FindGeoMatchModelRotateParallelSSE(const void* srcarr, C
 				double iTx, iTy, iSx, iSy;
 				double gradMag;
 				int curX, curY;
+				uchar* sd0Data = Sd[0]->data.ptr;
+				uchar* sd1Data = Sd[1]->data.ptr;
+				int sd0Step = Sd[0]->step;
+				int sd1Step = Sd[1]->step;
 				for (int m = 0; m < model.noOfCordinates; m++)
 				{
 					/*		__m128 m1, m2, m3, m4;
@@ -881,8 +888,8 @@ double NCC_ModelFinder::FindGeoMatchModelRotateParallelSSE(const void* srcarr, C
 					if (curX<0 || curY<0 || curX>Ssize.height - 1 || curY>Ssize.width - 1)
 						continue;
 
-					_Sdx = (short*)(Sd[0]->data.ptr + Sd[0]->step * (curX));
-					_Sdy = (short*)(Sd[1]->data.ptr + Sd[1]->step * (curX));
+					_Sdx = (short*)(sd0Data + sd0Step * (curX));
+					_Sdy = (short*)(sd1Data + sd1Step * (curX));
 
 					iSx = _Sdx[curY]; // get curresponding  X derivative from source image
 					iSy = _Sdy[curY];// get curresponding  Y derivative from source image
@@ -903,12 +910,24 @@ double NCC_ModelFinder::FindGeoMatchModelRotateParallelSSE(const void* srcarr, C
 						break;
 
 				}
-				if (partialScore > resultScore[degree])
-				{
-					resultScore[degree] = partialScore; //  Match score
-					tmpPoint[degree].x = i;
-					tmpPoint[degree].y = j;
-				}
+				/*if (model.PyramidIdx != 0)
+				{*/
+					if (partialScore > resultScore[degree])
+					{
+						resultScore[degree] = partialScore; //  Match score
+						tmpPoint[degree].x = i;
+						tmpPoint[degree].y = j;
+					}
+				/*}*/
+				
+					if (partialScore > 0.9)
+					{
+						resultScore[degree] = partialScore; //  Match score
+						tmpPoint[degree].x = i;
+						tmpPoint[degree].y = j;
+						isFound = true;
+					}
+				
 			}
 
 		}

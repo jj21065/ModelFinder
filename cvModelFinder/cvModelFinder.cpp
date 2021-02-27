@@ -13,14 +13,14 @@ int main()
 	Bitmap^ image = safe_cast<Bitmap^>(Image::FromFile(".//template1.jpg"));
 	Bitmap^ image2 = safe_cast<Bitmap^>(Image::FromFile(".//Test_Golden.tif"));
 
-	modelFinder->SetModelPara(-5, 5, 0.051, 0.5);
+	modelFinder->SetModelPara(-5, 5, 0.051, 0.75);
 	modelFinder->CreateModelFromImage(image);
 
 	/*modelFinder->SerializeModel("template.mod");
 	modelFinder->DeSerializeModel("template.mod");*/
 	int high = 140; 
 	int low = 100;
-	modelFinder->SetROI(1100, 850, 700, 700);
+	modelFinder->SetROI(1100, 850, 350, 350);
 	modelFinder->SetSobelThreshold(170, 210);
 //	modelFinder->SetROI(100, 100, 400, 300);
 	modelFinder->showCvImage = true;
@@ -45,7 +45,7 @@ int main()
 		{
 			std::cout << "S" << std::endl;
 			modelFinder->showCvImage = true;
-		//	Bitmap^ image2 = safe_cast<Bitmap^>(Image::FromFile(".//Test_Golden.tif"));
+			Bitmap^ image2 = safe_cast<Bitmap^>(Image::FromFile(".//Test_Golden.tif"));
 			modelFinder->ModelFind(image2);
 			std::cout <<std::endl << "ModelFind at (" << modelFinder->searchResult->X << "< " << modelFinder->searchResult->Y << ")"<<std::endl;
 		}
