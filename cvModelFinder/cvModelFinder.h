@@ -14,6 +14,21 @@ namespace CLI {
 		double scale = 1;
 		double Score = 0;
 		bool Result = false;
+		SearchResult()
+		{
+
+		}
+		SearchResult(SearchResult^ result)
+		{
+			X = result->X;
+			Y = result->Y;
+			Rotation = result->Rotation;
+			scale = result->scale;
+			Score = result->scale;
+			Result = result->Result;
+
+		}
+
 
 	};
 	public ref class SearchROI

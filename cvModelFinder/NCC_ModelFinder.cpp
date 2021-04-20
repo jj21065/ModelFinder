@@ -282,7 +282,7 @@ void NCC_ModelFinder::CreateRotateModel(Cpp::ModelDefine& model)
 		model.edgeDerivativeXRotate[i] = new double[model.noOfCordinates];
 		model.edgeDerivativeYRotate[i] = new double[model.noOfCordinates];
 	}
-	for (int degree = 0; degree < model.totalDegree - 1; degree++)
+	for (int degree = 0; degree < model.totalDegree ; degree++)
 	{
 		for (int i = 0; i < model.noOfCordinates; i++)
 		{
@@ -395,8 +395,8 @@ void NCC_ModelFinder::ModelFind(cv::Mat mat)
 		/*	cvNamedWindow("Search dst", CV_WINDOW_AUTOSIZE);
 			cvShowImage("Search dst", dst);*/
 			cvSetImageROI(dst, tmproi.rect);
-			cvNamedWindow("Search roi dst", CV_WINDOW_AUTOSIZE);
-			cvShowImage("Search roi dst", dst);
+			/*cvNamedWindow("Search roi dst", CV_WINDOW_AUTOSIZE);
+			cvShowImage("Search roi dst", dst);*/
 
 			cout << "total degree " << m_modelDefine[prymidIdx].totalDegree << endl;;
 			score = FindGeoMatchModelRotateParallelSSE(dst, m_modelDefine[prymidIdx], tmproi, tempX, tempY, tempXEnd, tempYEnd, rotateStart, rotateEnd, minScore, greediness, rotation);
@@ -426,20 +426,28 @@ void NCC_ModelFinder::ModelFind(cv::Mat mat)
 				}
 				if (prymidIdx > 0) {
 				
-					int RangeStart = rotation - m_modelDefine[prymidIdx].totalDegree / 100;
+					int RangeStart = rotation - ((prymidIdx+1) / m_modelDefine[prymidIdx].rotationResolution);
 					RangeStart = (RangeStart < 0) ? 0 : RangeStart;
 						
-					int RangeEnd = rotation + m_modelDefine[prymidIdx].totalDegree / 100;
+					int RangeEnd = rotation + ((prymidIdx +1)/ m_modelDefine[prymidIdx].rotationResolution);
 					RangeEnd = (RangeEnd > m_modelDefine[prymidIdx].totalDegree-1) ? m_modelDefine[prymidIdx].totalDegree-1 : RangeEnd;
 
 					rotateStart = (int)(m_modelDefine[prymidIdx].rotationResolution * (RangeStart) / m_modelDefine[prymidIdx - 1].rotationResolution);
 					rotateEnd = (int)(m_modelDefine[prymidIdx].rotationResolution * (RangeEnd) / m_modelDefine[prymidIdx - 1].rotationResolution);
 
-
-					tempY = (result.location.x - tmproi.rect.y) * 2 - tmproi.rect.height / 4;
-					tempX = (result.location.y - tmproi.rect.x) * 2 - tmproi.rect.width / 4;
-					tempYEnd = tempY + tmproi.rect.height / 2;
-					tempXEnd = tempX + tmproi.rect.width / 2;
+					//cout << "r1 " << RangeStart << "," << RangeEnd << " rotation " << rotation << " roate new " << rotateStart << " rotate new end " << rotateEnd << endl;
+				/*	tempX = (result.location.x) * 2 - 20;
+					tempY = (result.location.y) * 2 -20;
+					tempXEnd = tempX + 40;
+					tempYEnd = tempY + 40;
+					cout << "roix " << tempX << endl;
+					cout << "roiy " << tempY << endl;
+					cout << "result x " << tempXEnd << endl;
+					cout << "result y " << tempYEnd << endl;*/
+					tempX = (result.location.x - tmproi.rect.y) * 2 -15;
+					tempY = (result.location.y - tmproi.rect.x) * 2 - 15;
+					tempYEnd = tempY + 30;
+					tempXEnd = tempX + 30;;
 				}
 			
 			}
@@ -838,7 +846,7 @@ double NCC_ModelFinder::FindGeoMatchModelRotateParallelSSE(const void* srcarr, C
 	int height = xend;
 	int width = yend;
 	int degreeStart = rotateStart;
-	int degreeEnd = model.totalDegree;
+	int degreeEnd = rotateEnd;
 	/*int degreeStart = 0;
 	int degreeEnd = model.totalDegree;*/
 	cout << "iterateion X = " << (height - x) << " Y =" << (width - y) << " R =" << (degreeEnd - degreeStart);
@@ -910,23 +918,24 @@ double NCC_ModelFinder::FindGeoMatchModelRotateParallelSSE(const void* srcarr, C
 						break;
 
 				}
-				/*if (model.PyramidIdx != 0)
-				{*/
+				//if (model.PyramidIdx != 0)
+				//{
 					if (partialScore > resultScore[degree])
 					{
 						resultScore[degree] = partialScore; //  Match score
 						tmpPoint[degree].x = i;
 						tmpPoint[degree].y = j;
 					}
-				/*}*/
-				
-					if (partialScore > 0.9)
-					{
-						resultScore[degree] = partialScore; //  Match score
-						tmpPoint[degree].x = i;
-						tmpPoint[degree].y = j;
-						isFound = true;
-					}
+				//}
+				//else {
+				//	if (partialScore > minScore)
+				//	{
+				//		resultScore[degree] = partialScore; //  Match score
+				//		tmpPoint[degree].x = i;
+				//		tmpPoint[degree].y = j;
+				//		isFound = true;
+				//	}
+				//}
 				
 			}
 

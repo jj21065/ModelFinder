@@ -8,20 +8,24 @@ using namespace System;
 using namespace System::Drawing;
 int main()
 {
-	
+	//System::String^ filename = "D://work/Git/ModelFinder/ModelFinder_master/photo/CoAxisLight/black_No_Co.bmp";
+	System::String^ filename = "D://work/Git/ModelFinder/ModelFinder_master/cvModelFinder/Capture/Test2.tif";
+	//System::String^ golden = "D://work/Git/ModelFinder/ModelFinder_master/photo/CoAxisLight//golden.jpg";
+	System::String^ golden = "D://work/Git/ModelFinder/ModelFinder_master/cvModelFinder/Capture/template1.jpg";
 	ModelFinder^ modelFinder = gcnew ModelFinder();
-	Bitmap^ image = safe_cast<Bitmap^>(Image::FromFile(".//template1.jpg"));
-	Bitmap^ image2 = safe_cast<Bitmap^>(Image::FromFile(".//Test_Golden.tif"));
+	//Bitmap^ image = safe_cast<Bitmap^>(Image::FromFile("D://work/Git/ModelFinder/ModelFinder_master/cvModelFinder/Capture/template1.jpg"));
+	Bitmap^ image2 = safe_cast<Bitmap^>(Image::FromFile(filename));
+	Bitmap^ image = safe_cast<Bitmap^>(Image::FromFile(golden));
 
-	modelFinder->SetModelPara(-5, 5, 0.051, 0.75);
+	modelFinder->SetModelPara(-15, 15, 0.051, 0.75);
 	modelFinder->CreateModelFromImage(image);
 
 	/*modelFinder->SerializeModel("template.mod");
 	modelFinder->DeSerializeModel("template.mod");*/
-	int high = 140; 
-	int low = 100;
-	modelFinder->SetROI(1100, 850, 350, 350);
-	modelFinder->SetSobelThreshold(170, 210);
+	int high = 150; 
+	int low = 120;
+	modelFinder->SetROI(750, 550, 500, 500);
+	modelFinder->SetSobelThreshold(low, high);
 //	modelFinder->SetROI(100, 100, 400, 300);
 	modelFinder->showCvImage = true;
 
@@ -45,13 +49,13 @@ int main()
 		{
 			std::cout << "S" << std::endl;
 			modelFinder->showCvImage = true;
-			Bitmap^ image2 = safe_cast<Bitmap^>(Image::FromFile(".//Test_Golden.tif"));
+			Bitmap^ image2 = safe_cast<Bitmap^>(Image::FromFile(filename));
 			modelFinder->ModelFind(image2);
 			std::cout <<std::endl << "ModelFind at (" << modelFinder->searchResult->X << "< " << modelFinder->searchResult->Y << ")"<<std::endl;
 		}
 		if (c == '+')
 		{
-			Bitmap^ image = safe_cast<Bitmap^>(Image::FromFile(".//template1.jpg"));
+			Bitmap^ image = safe_cast<Bitmap^>(Image::FromFile(filename));
 			high += 10;
 			low += 10;
 			std::cout << std::endl << "high" << std::endl;
@@ -61,7 +65,7 @@ int main()
 		}
 		if (c == '-')
 		{
-			Bitmap^ image = safe_cast<Bitmap^>(Image::FromFile(".//template1.jpg"));
+			Bitmap^ image = safe_cast<Bitmap^>(Image::FromFile(golden));
 			high-= 10;
 			low -= 10;
 			std::cout << std::endl << "low" << std::endl;
