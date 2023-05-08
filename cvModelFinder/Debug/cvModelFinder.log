@@ -1,0 +1,9 @@
+﻿  pch.cpp
+  AssemblyInfo.cpp
+  cvModelFinder.cpp
+  ModelDefine.cpp
+F:\Work\git\ModelFinder\cvModelFinder\opencv2413\include\opencv2\imgproc\imgproc_c.h(46,10): fatal error C1083: 無法開啟包含檔案: 'opencv2/core/core_c.h': No such file or directory
+  NCC_ModelFinder.cpp
+F:\Work\git\ModelFinder\cvModelFinder\ModelDefine.h(2,10): fatal error C1083: 無法開啟包含檔案: 'opencv2/imgproc/imgproc_c.h': No such file or directory
+  正在產生程式碼...
+F:\Work\git\ModelFinder\cvModelFinder\opencv2413\include\opencv2\imgproc\imgproc_c.h(46,10): fatal error C1083: 無法開啟包含檔案: 'opencv2/core/core_c.h': No such file or directory

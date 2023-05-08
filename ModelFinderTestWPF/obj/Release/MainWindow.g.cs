@@ -9,6 +9,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using Compatibility;
 using ModelFinderTestWPF;
 using System;
 using System.Diagnostics;

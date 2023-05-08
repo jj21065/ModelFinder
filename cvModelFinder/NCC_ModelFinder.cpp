@@ -803,7 +803,6 @@ double NCC_ModelFinder::FindGeoMatchModelRotateParallelSSE(const void* srcarr, C
 		else
 		{
 			cvSobel(src, Sd[i], 0, 1, 3); // find Y derivatives
-
 		}
 	}
 
@@ -811,8 +810,8 @@ double NCC_ModelFinder::FindGeoMatchModelRotateParallelSSE(const void* srcarr, C
 	// stoping criterias to search for model
 	double normMinScore = minScore / model.noOfCordinates; // precompute minumum score 
 	double normGreediness = ((1 - greediness * minScore) / (1 - greediness)) / model.noOfCordinates; // precompute greedniness 
-
 	bool isFound = false;
+
 #pragma omp parallel for
 	for (i = 0; i < Ssize.height; i++)
 	{
@@ -837,7 +836,6 @@ double NCC_ModelFinder::FindGeoMatchModelRotateParallelSSE(const void* srcarr, C
 				matGradMag[i][j] = 1 / gradMag;   // 1/Sqrt(dx^2 +dy^2)
 			else
 				matGradMag[i][j] = 0;
-
 		}
 	}
 	/*int height = Ssize.height;
@@ -847,9 +845,8 @@ double NCC_ModelFinder::FindGeoMatchModelRotateParallelSSE(const void* srcarr, C
 	int width = yend;
 	int degreeStart = rotateStart;
 	int degreeEnd = rotateEnd;
-	/*int degreeStart = 0;
-	int degreeEnd = model.totalDegree;*/
-	cout << "iterateion X = " << (height - x) << " Y =" << (width - y) << " R =" << (degreeEnd - degreeStart);
+
+	// cout << "iterateion X = " << (height - x) << " Y =" << (width - y) << " R =" << (degreeEnd - degreeStart);
 #pragma omp parallel for
 	for (i = x; i < height; i++)
 	{
@@ -936,11 +933,8 @@ double NCC_ModelFinder::FindGeoMatchModelRotateParallelSSE(const void* srcarr, C
 				//		isFound = true;
 				//	}
 				//}
-				
 			}
-
 		}
-
 	}
 	//);
 	int tmpindex = 0;

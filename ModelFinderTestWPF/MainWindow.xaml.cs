@@ -1,4 +1,8 @@
-﻿using System;
+﻿using ImageView;
+using ModelFinder.Model.ImageProcess;
+using ModelFinder.View.ModelEditView;
+using Prism.Events;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -22,49 +26,55 @@ namespace ModelFinderTestWPF
   
     public partial class MainWindow : Window
     {
-        public CLI.ModelFinder modelFinder = new CLI.ModelFinder();
+        //public CLI.ModelFinder modelFinder = new CLI.ModelFinder();
         public MainWindow()
         {
             InitializeComponent();
+            
+            IEventAggregator eventAggregator = new EventAggregator();
+            ImageProcessControl imageProcessControl = new ImageProcessControl(eventAggregator);
 
-            Bitmap image = new Bitmap(@".\\template1.jpg");
-            if (image != null)
-            {
-                modelFinder.SetModelPara(-3, 3, 0.1, 0.9);
-                modelFinder.SetROI(1100, 850, 400, 400);
-                modelFinder.SetSobelThreshold(120, 130);
-                modelFinder.showCvImage = true;
-                modelFinder.CreateModelFromImage(image);
-                image.Dispose();
-            }
+            ModelEditView modelEditView = new ModelEditView(imageProcessControl, eventAggregator);
+            modelEditView.Show();
+
+            //Bitmap image = new Bitmap(@".\\template1.jpg");
+            //if (image != null)
+            //{
+            //    modelFinder.SetModelPara(-3, 3, 0.1, 0.9);
+            //    modelFinder.SetROI(1100, 850, 400, 400);
+            //    modelFinder.SetSobelThreshold(120, 130);
+            //    modelFinder.showCvImage = true;
+            //    modelFinder.CreateModelFromImage(image);
+            //    image.Dispose();
+            //}
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            Bitmap image2 = new Bitmap(".//Test_Golden.tif");
-                if(image2 != null)
-                    modelFinder.ModelFind(image2);
+            //Bitmap image2 = new Bitmap(".//Test_Golden.tif");
+            //    if(image2 != null)
+            //        modelFinder.ModelFind(image2);
        
-            Console.WriteLine("ModelFind at (" + modelFinder.searchResult.X + ", " + modelFinder.searchResult.Y + ")");
+            //Console.WriteLine("ModelFind at (" + modelFinder.searchResult.X + ", " + modelFinder.searchResult.Y + ")");
           
-            image2.Dispose();
+            //image2.Dispose();
             //			std::cout <<std::endl << "ModelFind at (" << modelFinder->searchResult.X << "< " << modelFinder->searchResult.Y << <<")"<<std::endl;
         }
 
         private void SaveClick(object sender, RoutedEventArgs e)
         {
-            modelFinder.SerializeModel(@"test.mod");
+            //modelFinder.SerializeModel(@"test.mod");
         }
 
         private void LoadClick(object sender, RoutedEventArgs e)
         {
-            try
-            {
-                modelFinder.DeSerializeModel(@"test.mod");
-            }catch(Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
-            }
+            //try
+            //{
+            //    modelFinder.DeSerializeModel(@"test.mod");
+            //}catch(Exception ex)
+            //{
+            //    Console.WriteLine(ex.ToString());
+            //}
         }
     }
 }

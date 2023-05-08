@@ -1,0 +1,194 @@
+﻿<Window x:Class="ModelFinder.View.ModelEditView.ModelEditView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ModelFinder.View.ModelEditView"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        mc:Ignorable="d"
+        Title="Model Edit Window" Height="450" Width="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Menu IsMainMenu="True">
+            <MenuItem Header="_File">
+                <MenuItem Header="Save">
+                    <MenuItem.Icon>
+                        <materialDesign:PackIcon Kind="ContentSave" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Header="Save As.." />
+                <MenuItem Header="Load Image" Command="{Binding LoadImageCommand}"/>
+                <MenuItem Header="Exit" InputGestureText="Ctrl+E">
+                    <MenuItem.Icon>
+                        <materialDesign:PackIcon Kind="ExitToApp" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <Separator/>
+                <MenuItem  Header="Excellent" IsCheckable="True" IsChecked="True" />
+                <MenuItem Header="Rubbish" IsCheckable="True"/>
+                <MenuItem Header="Dig Deeper" InputGestureText="Ctrl+D">
+                    <MenuItem Header="Enlightenment?" IsCheckable="True" />
+                    <MenuItem Header="Disappointment" IsCheckable="True" />
+                </MenuItem>
+                <MenuItem  Header="Look Deeper" InputGestureText="Ctrl+D">
+                    <MenuItem Header="Plain" />
+                    <MenuItem Header="Ice Cream" />
+                </MenuItem>
+            </MenuItem>
+            <MenuItem Header="_Edit">
+                <MenuItem Header="_Cut" Command="Cut">
+                    <MenuItem.Icon>
+                        <materialDesign:PackIcon Kind="ContentCut"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Header="_Copy" Command="Copy">
+                    <MenuItem.Icon>
+                        <materialDesign:PackIcon Kind="ContentCopy" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Header="_Paste" Command="Paste">
+                    <MenuItem.Icon>
+                        <materialDesign:PackIcon Kind="ContentPaste" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <Separator/>
+                <MenuItem Header="Get Heu image">
+                    <MenuItem.Icon>
+                        <materialDesign:PackIcon Kind="AlphabetH" Width="20" Height="20" Padding="0" VerticalAlignment="Center"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Header="Get Sat image">
+                    <MenuItem.Icon>
+                        <materialDesign:PackIcon Kind="AlphabetS" Width="20" Height="20" Padding="0" VerticalAlignment="Center"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Header="Get Val Image">
+                    <MenuItem.Icon>
+                        <materialDesign:PackIcon Kind="AlphabetV" Width="20" Height="20" Padding="0" VerticalAlignment="Center"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+            </MenuItem>
+            <MenuItem Header="_Tool">
+                <MenuItem Header="_Get rect Roi" Command="{Binding GetRectRoiCommand}">
+                    <MenuItem.Icon>
+                        <materialDesign:PackIcon Kind="RectangleOutline" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Header="_Get ellipse Roi"  Command="{Binding GetEllipseRoiCommand}">
+                    <MenuItem.Icon>
+                        <materialDesign:PackIcon Kind="EllipseOutline" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Header="_Save glue path Pt"  Command="{Binding SaveGluePathPtCommand}">
+                    <MenuItem.Icon>
+                        <materialDesign:PackIcon Kind="VectorRadius" />
+                    </MenuItem.Icon>
+                </MenuItem>
+            </MenuItem>
+            <MenuItem Header="Process">
+                <MenuItem Header="_Sharpening" Command="{Binding SharpenImageCommand}"></MenuItem>
+                <MenuItem Header="_Opening" Command="{Binding OpeningImageCommand}"></MenuItem>
+                <MenuItem Header="Save Model" Command="{Binding SaveModelCommand}"></MenuItem>
+                <MenuItem Header="Load Model" Command="{Binding LoadModelCommand}"></MenuItem>
+                <MenuItem Header="Find Model" Command="{Binding FindModelCommand}"></MenuItem>
+            </MenuItem>
+        </Menu>
+        <ToolBarTray Grid.Row="1">
+            <ToolBar Style="{DynamicResource MaterialDesignToolBar}" ClipToBounds="False">
+
+                <Button ToolTip="Save">
+                    <materialDesign:PackIcon Kind="ContentSave" />
+                </Button>
+                <Separator />
+
+
+                <Separator />
+
+                <!-- when badging in a toolbar, make sure the parent ToolBar.ClipToBounds="False", and 
+                   manually apply the button style -->
+
+
+
+                <ListBox SelectedIndex="{Binding AddShapeListBoxSelectedIndex}">
+                    <ListBox.ToolTip>
+                        <StackPanel>
+                            <TextBlock Text="MaterialDesignToolToggleFlatListBox" />
+                            <TextBlock Text="Exclusive selection" />
+                            <TextBlock Text="ListBoxAssist.IsToggle allows more natural toggle behaviour" />
+                        </StackPanel>
+                    </ListBox.ToolTip>
+                    <ListBoxItem Name="test">
+                        <materialDesign:PackIcon Kind="AddLocation" />
+                    </ListBoxItem>
+                    <ListBoxItem>
+                        <materialDesign:PackIcon Kind="ShapeRectangleAdd" />
+                    </ListBoxItem>
+                    <ListBoxItem>
+                        <materialDesign:PackIcon Kind="ShapeCircleAdd" />
+                    </ListBoxItem>
+                    <ListBoxItem>
+                        <materialDesign:PackIcon Kind="Eraser"></materialDesign:PackIcon>
+                    </ListBoxItem>
+                 
+
+                        
+                  
+                </ListBox>
+                <materialDesign:PopupBox PopupMode="Click" PlacementMode="BottomAndAlignRightEdges">
+                    <materialDesign:PopupBox.ToggleContent>
+                        <materialDesign:PackIcon Kind="ImageSizeSelectSmall"/>
+                    </materialDesign:PopupBox.ToggleContent>
+                    <StackPanel>
+                        <Label Content="Mask Size"></Label>
+                        <Slider Orientation="Vertical" Minimum="1" Maximum="255" Style="{StaticResource MaterialDesignDiscreteSlider}" ToolTip="MaterialDesignDiscreteSlider" Value="{Binding MaskSize,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"  Height="180" Width="90" HorizontalAlignment="Right"/>
+                    </StackPanel>
+                </materialDesign:PopupBox>
+                <Separator />
+
+                <Separator />
+                <Label Content="Threshold Low:" VerticalAlignment="Center" />
+                <TextBox Width="70" Text="{Binding ThresholdLow,UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                <Label Content="Threshold High:" VerticalAlignment="Center" />
+                <TextBox Width="70" Text="{Binding ThresholdHigh,UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                <Button Command="{Binding SobelThresholdCommand}">
+                    <materialDesign:PackIcon Kind="Refresh"></materialDesign:PackIcon>
+                </Button>
+                <CheckBox>
+                    Check
+                </CheckBox>
+                <Button ToolTip="Take a nap" ToolBar.OverflowMode="Always">
+                    <materialDesign:PackIcon Kind="Hotel" />
+                </Button>
+                <RadioButton GroupName="XXX" Content="Radio" />
+                <RadioButton GroupName="XXX" Content="Ga Ga" />
+                <ToggleButton />
+            </ToolBar>
+        </ToolBarTray>
+        <ToolBarTray Grid.Row="2" >
+            <ToolBar Style="{DynamicResource MaterialDesignToolBar}" ClipToBounds="False" VerticalAlignment="Center">
+
+                <Label Content="Rotation(-)" VerticalAlignment="Center"></Label>
+                <TextBox Text="{Binding RotationNegDegree,UpdateSourceTrigger=PropertyChanged}" Width="50"></TextBox>
+                <Label Content="Rotation(+)" VerticalAlignment="Center"></Label>
+                <TextBox Text="{Binding RotationPosDegree,UpdateSourceTrigger=PropertyChanged}" Width="50"></TextBox>
+                <Label Content="Rotate Resolution" VerticalAlignment="Center"></Label>
+                <TextBox Text="{Binding RotationResolution,UpdateSourceTrigger=PropertyChanged}" Width="50"></TextBox>
+                <Label Content="Score" VerticalAlignment="Center"></Label>
+                <TextBox Text="{Binding ModelSearchScore,UpdateSourceTrigger=PropertyChanged}" Width="50"></TextBox>
+                <Button Command="{Binding UpdateModelParaCommand}" Content="Update"/>
+                <Separator />
+
+
+
+            </ToolBar>
+        </ToolBarTray>
+        <Grid Grid.Row="3" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="10" Name="grid_AddImageView">
+            <!--<ImageView:ImageControlView x:Name="ImageControl"></ImageView:ImageControlView>-->
+        </Grid>
+    </Grid>
+</Window>

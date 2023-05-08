@@ -6,96 +6,99 @@
 using namespace CLI;
 using namespace System;
 using namespace System::Drawing;
-int main()
-{
-	//System::String^ filename = "D://work/Git/ModelFinder/ModelFinder_master/photo/CoAxisLight/black_No_Co.bmp";
-	System::String^ filename = "D://work/Git/ModelFinder/ModelFinder_master/cvModelFinder/Capture/Test2.tif";
-	//System::String^ golden = "D://work/Git/ModelFinder/ModelFinder_master/photo/CoAxisLight//golden.jpg";
-	System::String^ golden = "D://work/Git/ModelFinder/ModelFinder_master/cvModelFinder/Capture/template1.jpg";
-	ModelFinder^ modelFinder = gcnew ModelFinder();
-	//Bitmap^ image = safe_cast<Bitmap^>(Image::FromFile("D://work/Git/ModelFinder/ModelFinder_master/cvModelFinder/Capture/template1.jpg"));
-	Bitmap^ image2 = safe_cast<Bitmap^>(Image::FromFile(filename));
-	Bitmap^ image = safe_cast<Bitmap^>(Image::FromFile(golden));
-
-	modelFinder->SetModelPara(-15, 15, 0.051, 0.75);
-	modelFinder->CreateModelFromImage(image);
-
-	/*modelFinder->SerializeModel("template.mod");
-	modelFinder->DeSerializeModel("template.mod");*/
-	int high = 150; 
-	int low = 120;
-	modelFinder->SetROI(750, 550, 500, 500);
-	modelFinder->SetSobelThreshold(low, high);
-//	modelFinder->SetROI(100, 100, 400, 300);
-	modelFinder->showCvImage = true;
-
-	//modelFinder->ModelFind(image2);
-
-	int eraserWidth = 20;
-	int x = 31;
-	int y = 30;
-	while(1)
-	{
-		char c = cvWaitKey(4);
-		if (c == 'm')
-		{
-			modelFinder->SerializeModel(".//testModel.mod");
-		}
-		if (c == ',')
-		{
-			modelFinder->DeSerializeModel(".//testModel.mod");
-		}
-		if (c == 's')
-		{
-			std::cout << "S" << std::endl;
-			modelFinder->showCvImage = true;
-			Bitmap^ image2 = safe_cast<Bitmap^>(Image::FromFile(filename));
-			modelFinder->ModelFind(image2);
-			std::cout <<std::endl << "ModelFind at (" << modelFinder->searchResult->X << "< " << modelFinder->searchResult->Y << ")"<<std::endl;
-		}
-		if (c == '+')
-		{
-			Bitmap^ image = safe_cast<Bitmap^>(Image::FromFile(filename));
-			high += 10;
-			low += 10;
-			std::cout << std::endl << "high" << std::endl;
-			modelFinder->SetSobelThreshold(high, low);
-			modelFinder->CreateModelFromImage(image);
-			
-		}
-		if (c == '-')
-		{
-			Bitmap^ image = safe_cast<Bitmap^>(Image::FromFile(golden));
-			high-= 10;
-			low -= 10;
-			std::cout << std::endl << "low" << std::endl;
-			modelFinder->SetSobelThreshold(high, low);
-			modelFinder->CreateModelFromImage(image);
-		
-		}
-		if (c == '5')
-		{
-			x -= 2;
-			modelFinder->EraseModel(x, y, eraserWidth);
-		}
-		if (c == '2')
-		{
-			x += 2;
-			modelFinder->EraseModel(x, y, eraserWidth);
-		}
-		if (c == '1')
-		{
-			y -= 2;
-			modelFinder->EraseModel(x, y, eraserWidth);
-		}
-		if (c == '3')
-		{
-			y += 2;
-			modelFinder->EraseModel(x, y, eraserWidth);
-		}
-	}
-
-}
+//int main()
+//{
+//	System::String^ strExeFilePath = System::Reflection::Assembly::GetExecutingAssembly()->Location;
+//	//This will strip just the working path name:
+//	//C:\Program Files\MyApplication
+//	System::String^ currentExePath = System::IO::Path::GetDirectoryName(strExeFilePath);	//System::String^ filename = "D://work/Git/ModelFinder/ModelFinder_master/photo/CoAxisLight/black_No_Co.bmp";
+//	System::String^ filename = currentExePath + "/image2.jpg";
+//	//System::String^ golden = "D://work/Git/ModelFinder/ModelFinder_master/photo/CoAxisLight//golden.jpg";
+//	System::String^ golden = currentExePath + "/template1.jpg";
+//	ModelFinder^ modelFinder = gcnew ModelFinder();
+//	//Bitmap^ image = safe_cast<Bitmap^>(Image::FromFile("D://work/Git/ModelFinder/ModelFinder_master/cvModelFinder/Capture/template1.jpg"));
+//	Bitmap^ image2 = safe_cast<Bitmap^>(Image::FromFile(filename));
+//	Bitmap^ image = safe_cast<Bitmap^>(Image::FromFile(golden));
+//
+//	modelFinder->SetModelPara(-15, 15, 0.051, 0.75);
+//	modelFinder->CreateModelFromImage(image);
+//
+//	/*modelFinder->SerializeModel("template.mod");
+//	modelFinder->DeSerializeModel("template.mod");*/
+//	int high = 150; 
+//	int low = 120;
+//	modelFinder->SetROI(750, 550, 500, 500);
+//	modelFinder->SetSobelThreshold(low, high);
+//	modelFinder->SetROI(100, 100, 600, 600);
+//	modelFinder->showCvImage = true;
+//
+//	//modelFinder->ModelFind(image2);
+//
+//	int eraserWidth = 20;
+//	int x = 31;
+//	int y = 30;
+//	while(1)
+//	{
+//		char c = cvWaitKey(4);
+//		if (c == 'm')
+//		{
+//			modelFinder->SerializeModel(".//testModel.mod");
+//		}
+//		if (c == ',')
+//		{
+//			modelFinder->DeSerializeModel(".//testModel.mod");
+//		}
+//		if (c == 's')
+//		{
+//			std::cout << "S" << std::endl;
+//			modelFinder->showCvImage = true;
+//			Bitmap^ image2 = safe_cast<Bitmap^>(Image::FromFile(filename));
+//			modelFinder->ModelFind(image2);
+//			std::cout <<std::endl << "ModelFind at (" << modelFinder->searchResult->X << "< " << modelFinder->searchResult->Y << ")"<<std::endl;
+//		}
+//		if (c == '+')
+//		{
+//			Bitmap^ image = safe_cast<Bitmap^>(Image::FromFile(golden));
+//			high += 10;
+//			low += 10;
+//			std::cout << std::endl << "high" << std::endl;
+//			modelFinder->SetSobelThreshold(high, low);
+//			modelFinder->CreateModelFromImage(image);
+//			
+//		}
+//		if (c == '-')
+//		{
+//			Bitmap^ image = safe_cast<Bitmap^>(Image::FromFile(golden));
+//			high-= 10;
+//			low -= 10;
+//			std::cout << std::endl << "low" << std::endl;
+//			modelFinder->SetSobelThreshold(high, low);
+//			modelFinder->CreateModelFromImage(image);
+//		
+//		}
+//		if (c == '5')
+//		{
+//			x -= 2;
+//			modelFinder->EraseModel(x, y, eraserWidth);
+//		}
+//		if (c == '2')
+//		{
+//			x += 2;
+//			modelFinder->EraseModel(x, y, eraserWidth);
+//		}
+//		if (c == '1')
+//		{
+//			y -= 2;
+//			modelFinder->EraseModel(x, y, eraserWidth);
+//		}
+//		if (c == '3')
+//		{
+//			y += 2;
+//			modelFinder->EraseModel(x, y, eraserWidth);
+//		}
+//	}
+//
+//}
 
 ModelFinder::ModelFinder()
 {

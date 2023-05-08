@@ -4,17 +4,17 @@
 exe
 C#
 .cs
-D:\Git\ModelFinder\ModelFinderTestWPF\obj\Release\
+F:\Work\git\ModelFinder\ModelFinderTestWPF\obj\Release\
 ModelFinderTestWPF
 none
 false
 TRACE
-D:\Git\ModelFinder\ModelFinderTestWPF\App.xaml
-11151548125
+F:\Work\git\ModelFinder\ModelFinderTestWPF\App.xaml
+3-274954603
 
-5-2017746502
-15-1900934879
-MainWindow.xaml;
+23867959515
+39-310182182
+MainWindow.xaml;View\ImageView\ImageControlView.xaml;View\ModelEditView\ModelEditView.xaml;
 
-False
+True
 
